@@ -15,7 +15,7 @@ import shapeless.{
 import play.api.libs.json._
 
 
-trait Extension// extends Product
+trait Extension
 
 
 abstract class SimpleExtension[+V: Extension.ValidValue] extends Extension
@@ -69,6 +69,9 @@ extends ValidValues[
 
     implicit def simpleExtension[E <: SimpleExtension[_]]: IsValidExtension[E] =
       new IsValidExtension[E]{}
+
+    implicit def optionalExtension[E: IsValidExtension]: IsValidExtension[Option[E]] =
+      new IsValidExtension[Option[E]]{}
 
     implicit def extensions[E: IsValidExtension, C[X] <: Iterable[X]]: IsValidExtension[C[E]] =
       new IsValidExtension[C[E]]{}

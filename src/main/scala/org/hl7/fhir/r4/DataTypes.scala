@@ -45,7 +45,7 @@ trait ExtensibleAttributes
     val extension: C[List[E]]
   }
 
-  trait extensionNel[+E <: Product]{ 
+  trait extensionNel[+E <: Extension]{ 
     this: Extensible =>
     val extension: NonEmptyList[E]
   }

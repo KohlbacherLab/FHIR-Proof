@@ -372,6 +372,36 @@ object json
           case h :: t => Json.arr(fh.value.writes(h)) ++ Json.toJson(t).as[JsArray]
         }
       )
+
+    implicit def optionExtensionHead[H, T <: HList](
+      implicit
+      exts: Extension.IsValidExtension[H :: T],
+      fh: Lazy[Format[H]],
+      ft: Format[T],
+      url: Extension.Url[H]
+    ): Format[Option[H] :: T] =
+      Format[Option[H] :: T](
+        Reads(
+          js =>
+            for {
+              arr <- js.validate[JsArray] 
+              h   <- JsSuccess(
+                       arr.value 
+                         .find(v => (v \ "url").as[String] == url.value.toString)
+                         .map(fh.value.reads)
+                         .filter(_.isSuccess)
+                         .map(_.get)
+                     )
+              t   <- ft.reads(arr)
+            } yield h :: t
+            
+        ),
+        Writes {
+          case hOpt :: t =>
+            hOpt.map(fh.value.write).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
+        }
+      )
+    
     
     import scala.collection.{BuildFrom, Factory}
     
