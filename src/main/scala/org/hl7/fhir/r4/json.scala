@@ -398,7 +398,7 @@ object json
         ),
         Writes {
           case hOpt :: t =>
-            hOpt.map(fh.value.write).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
+            hOpt.map(fh.value.writes).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
         }
       )
     
