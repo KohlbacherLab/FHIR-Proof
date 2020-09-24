@@ -86,15 +86,5 @@ extends CanHaveNotes
     val authoredOn: C[D]
   }
 
-/*
-  trait supportingInfo[R <: Resource,C[_]]{
-    this: Request =>
-    val supportingInfo: C[List[Reference[R]]]
-  }
-  trait supportingInfoNel[R <: Resource]{
-    this: Request =>
-    val supportingInfo: NonEmptyList[Reference[R]]
-  }
-*/
 }
 

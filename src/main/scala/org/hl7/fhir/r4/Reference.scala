@@ -90,7 +90,9 @@ object Reference
           )
         ),
       Json.writes[LiteralReference[R]]
-        .transform((js: JsValue) => js.as[JsObject] + ("type" -> JsString(rs.name)))
+        .transform(
+          (js: JsValue) => js.as[JsObject] + ("type" -> JsString(rs.name))
+        )
     )
 
 
@@ -108,7 +110,9 @@ object Reference
           )
         ),
       Json.writes[LogicalReference[R]]
-        .transform((js: JsValue) => js.as[JsObject] + ("type" -> JsString(rs.name)))
+        .transform(
+          (js: JsValue) => js.as[JsObject] + ("type" -> JsString(rs.name))
+        )
     )
   
 
@@ -141,7 +145,9 @@ object Reference
       )(
         (ref: BasicReference[R]) => (ref.reference,ref.identifier)
       )  
-      .transform((js: JsValue) => js.as[JsObject] + ("type" -> JsString(rs.name)))
+      .transform(
+        (js: JsValue) => js.as[JsObject] + ("type" -> JsString(rs.name))
+      )
     )
     
 

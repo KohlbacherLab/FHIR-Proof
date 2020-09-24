@@ -79,11 +79,11 @@ with HasMedication
 
 
   trait supportingInformation[R <: Resource,C[_]]{
-    this: Request =>
+    this: MedicationRequest =>
     val supportingInformation: C[List[Reference[R]]]
   }
   trait supportingInformationNel[R <: Resource]{
-    this: Request =>
+    this: MedicationRequest =>
     val supportingInformation: NonEmptyList[Reference[R]]
   }
 
