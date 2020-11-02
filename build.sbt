@@ -15,10 +15,10 @@ lazy val root = project.in(file("."))
   .settings(settings)
   .settings(
     libraryDependencies ++= Seq(
+      "org.scalatest"     %% "scalatest" % "3.0.8" % Test,
       "org.typelevel"     %% "cats-core" % "2.1.1",
-      "com.typesafe.play" %% "play-json" % "2.8.0",
-      "com.chuusai"       %% "shapeless" % "2.3.3",
-      "org.scalatest"     %% "scalatest" % "3.0.8" % Test
+      "com.typesafe.play" %% "play-json" % "2.8.1",
+      "com.chuusai"       %% "shapeless" % "2.3.3"
    )
  )
 
