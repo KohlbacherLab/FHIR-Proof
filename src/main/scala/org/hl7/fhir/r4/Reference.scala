@@ -14,16 +14,24 @@ import play.api.libs.json._
 sealed trait Reference[+R <: Resource]
 
 
-final case class LiteralReference[+R <: Resource](reference: String)
-  extends Reference[R]
+final case class LiteralReference[+R <: Resource]
+(
+  reference: String
+)
+extends Reference[R]
 
 
-final case class LogicalReference[+R <: Resource](identifier: Identifier)
-  extends Reference[R]
+final case class LogicalReference[+R <: Resource]
+(
+  identifier: Identifier
+)
+extends Reference[R]
 
 
-final case class BasicReference[+R <: Resource](refIorId: Ior[String,Identifier])
-  extends Reference[R]
+final case class BasicReference[+R <: Resource](
+  refIorId: Ior[String,Identifier]
+)
+extends Reference[R]
 {
   val reference  = refIorId.onlyLeft
   val identifier = refIorId.onlyRight

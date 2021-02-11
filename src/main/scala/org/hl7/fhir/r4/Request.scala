@@ -27,7 +27,7 @@ extends CanHaveNotes
      type Priority = Value
 
      val Routine = Val("routine","Routine")
-     val Urgent  = Val("urgent ","Urgent ")
+     val Urgent  = Val("urgent","Urgent")
      val Asap    = Val("asap","Asap")
      val Stat    = Val("stat","Stat")
 

@@ -221,7 +221,7 @@ object Coding extends ElementAttributes
 final case class BasicCoding[S: Coding.System]
 (
   code: String,
-  display: Option[String],
+  display: Option[String] = None,
   version: Option[String] = None,
 )
 extends Coding

@@ -81,6 +81,11 @@ object Bundle
 
   object EntryOf
   {
+
+//    implicit def format[R <: Resource: Format]: Format[EntryOf[R]] = {
+//      Json.format[EntryOf[R]]
+//    }
+
     import FHIRJson._
 
     implicit def format[R <: Resource](
@@ -90,6 +95,7 @@ object Bundle
       implicit val f: Format[R] = fhir
       Json.format[EntryOf[R]]
     }
+
   }
 
 
@@ -138,9 +144,6 @@ object Bundle
     }
 
   }
-
-
-
 
 
 

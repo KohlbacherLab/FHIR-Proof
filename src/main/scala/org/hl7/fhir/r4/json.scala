@@ -129,6 +129,7 @@ object json
     implicit def singleBBEHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[H :: T],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
     ): Format[H :: T] =
@@ -137,20 +138,21 @@ object json
           js => 
             for {
               arr <- js.validate[JsArray]
-              h   <- arr.value.map(fh.value.read)
+              h   <- arr.value.map(fh.value.reads)
                        .find(_.isSuccess)
                        .getOrElse(JsError(s"No valid Entry found in ${arr}"))
               t   <- ft.reads(js)
             } yield h :: t
         ), 
         Writes {
-          case h :: t => Json.arr(fh.value.write(h)) ++ ft.writes(t).as[JsArray]
+          case h :: t => Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
         }
       )
 
     implicit def optionBBEHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[Option[H] :: T],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
     ): Format[Option[H] :: T] =
@@ -169,7 +171,7 @@ object json
         ), 
         Writes {
           case hOpt :: t =>
-            hOpt.map(fh.value.write).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
+            hOpt.map(fh.value.writes).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
         }
       )
 
@@ -177,6 +179,7 @@ object json
       implicit
       ct: scala.reflect.ClassTag[H],
       valid: IsValidBBEProduct[Array[H] :: T],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[Array[H] :: T] =
@@ -186,7 +189,7 @@ object json
             for {
               arr <- js.validate[JsArray]
               hs  <- JsSuccess(
-                      arr.value.map(fh.value.read)
+                      arr.value.map(fh.value.reads)
                         .filter(_.isSuccess)
                         .map(_.get)
                         .toArray
@@ -196,7 +199,7 @@ object json
           
         ), 
         Writes {
-          case hs :: t => new JsArray(hs.map(fh.value.write).toVector) ++ ft.writes(t).as[JsArray]
+          case hs :: t => new JsArray(hs.map(fh.value.writes).toVector) ++ ft.writes(t).as[JsArray]
         }
       )
 
@@ -206,6 +209,7 @@ object json
     implicit def bbeIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit
       valid: IsValidBBEProduct[C[H] :: T],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
       fac: Factory[H,C[H]],
@@ -217,8 +221,7 @@ object json
             for {
               arr <- js.validate[JsArray]
               hs  <- JsSuccess(
-                      arr.value.map(fh.value.read)
-//                        .tapEach(_.fold(println, _ => ()))
+                      arr.value.map(fh.value.reads)
                         .filter(_.isSuccess)
                         .map(_.get)
                         .to(fac)
@@ -228,13 +231,14 @@ object json
           
         ), 
         Writes {
-          case hs :: t => new JsArray(hs.map(fh.value.write).toIndexedSeq) ++ ft.writes(t).as[JsArray]
+          case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ ft.writes(t).as[JsArray]
         }
       )
 
     implicit def bbeNelHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[NonEmptyList[H] :: T],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[NonEmptyList[H] :: T] =
@@ -255,7 +259,7 @@ object json
             } yield hs :: t
         ), 
         Writes {
-          case hs :: t => new JsArray(hs.map(fh.value.write).toList.toIndexedSeq) ++ ft.writes(t).as[JsArray]
+          case hs :: t => new JsArray(hs.map(fh.value.writes).toList.toIndexedSeq) ++ ft.writes(t).as[JsArray]
         }
       )
 
@@ -466,6 +470,7 @@ object json
     implicit def formatContainedResourceHead[H, T <: HList](
       implicit 
       cr: ForAll[H :: T, IsContainedResource],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[H :: T] =
@@ -481,7 +486,7 @@ object json
             } yield h :: t
         ),
         Writes {
-          case h :: t => Json.arr(fh.value.write(h)) ++ ft.writes(t).as[JsArray]
+          case h :: t => Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
         }
       )
 
@@ -490,6 +495,7 @@ object json
     implicit def formatContainedResourceIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit 
       cr: ForAll[C[H] :: T, IsContainedResource],
+//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
       fac: Factory[H,C[H]],
@@ -511,7 +517,7 @@ object json
             } yield hs :: t
         ),
         Writes {
-          case hs :: t => new JsArray(hs.map(fh.value.write).toIndexedSeq) ++ ft.writes(t).as[JsArray]
+          case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ ft.writes(t).as[JsArray]
         }
       )
 

@@ -23,6 +23,7 @@ final object MedicationStatement
 extends DomainResourceAttributes
 with EventAttributes[Patient :+: Group :+: CNil]
 with CanHaveBasedOn
+with CanHaveReason[MedicationStatement]
 with CanHaveEffective[Temporal :+: Period[_] :+: CNil]
 with CanHaveNotes
 with HasMedication
@@ -81,7 +82,6 @@ with HasMedication
     this: MedicationStatement =>
     val dosage: NonEmptyList[D]
   }
-
 
 
 }

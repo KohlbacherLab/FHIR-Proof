@@ -8,12 +8,11 @@ import cats.data.NonEmptyList
 import shapeless.{:+:, CNil}
 
 
-abstract class MedicationRequest//[S <: Resource: MedicationRequest.Subject]
+abstract class MedicationRequest
 extends DomainResource
    with Request
    with MedicationRequest.status
    with MedicationRequest.intent
-//   with MedicationRequest.subject[S]
 {
   this: MedicationRequest.subject[_] =>
 }
@@ -23,6 +22,7 @@ final object MedicationRequest
 extends DomainResourceAttributes
 with RequestAttributes
 with CanHaveEncounter
+with CanHaveReason[MedicationRequest]
 with HasMedication
 {
 

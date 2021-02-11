@@ -10,7 +10,7 @@ import shapeless.{:+:, CNil}
 
 
 
-abstract class CarePlan//[S <: Resource: CarePlan.Subject]
+abstract class CarePlan
 extends DomainResource
    with Request
    with CarePlan.status
@@ -84,6 +84,16 @@ with CanHaveEncounter
     val description: C[String]
   }
 
+  trait addresses[F[+_]]{
+    this: CarePlan =>
+    val addresses: F[List[Reference[Condition]]]
+  }
+  trait addressesNel{
+    this: CarePlan =>
+    val addresses: NonEmptyList[Reference[Condition]]
+  }
+
+/*
   trait addresses[+C <: Condition, F[+_]]{
     this: CarePlan =>
     val addresses: F[List[Reference[C]]]
@@ -92,7 +102,7 @@ with CanHaveEncounter
     this: CarePlan =>
     val addresses: NonEmptyList[Reference[C]]
   }
-
+*/
  
   abstract class ActivityElement extends BackboneElement[Many]
   {

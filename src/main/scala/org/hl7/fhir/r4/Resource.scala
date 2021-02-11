@@ -13,6 +13,9 @@ abstract class Resource
 object Resource
 {
 
+  case class Id(value: String) extends AnyVal
+
+
   @annotation.implicitNotFound(
   "Couldn't find implicit value for Resource.Type[${R}]. Define it or ensure it is in scope"
   )
@@ -119,12 +122,8 @@ with ModifierExtensibleAttributes
 
 final object DomainResource
 {
-/*
-  trait ContainedResourceSet
-  {
-    this: Product =>
-  }
-*/
+
+
   @annotation.implicitNotFound(
   """${R} is not a valid contained Resource type.
   Only Resource type with member 'val id: String', Iterable[_] and NonEmptyList[_] are allowed"""

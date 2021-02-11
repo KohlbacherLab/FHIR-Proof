@@ -46,10 +46,8 @@ trait CanHavePartOf
 trait EventAttributes[Subjects <: Coproduct]
 extends CanHaveNotes
 {
-//  self =>
 
-
-  trait partOf
+//  trait partOf
 
 
 

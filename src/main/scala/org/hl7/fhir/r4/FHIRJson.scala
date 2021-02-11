@@ -8,14 +8,79 @@ import play.api.libs.json._
 
 import shapeless.{<:!<}
 
+import scala.language.experimental.macros
+import scala.reflect.macros.blackbox.Context
+
+
 object FHIRJson
 {
-
 
   implicit class ChainingOps[T](val t: T) extends AnyVal
   {
     def |[U](f: T => U): U = f(t)
   }
+
+
+/*
+  private val RESOURCE_TYPE = "resourceType"
+
+
+  private def addProfiles(
+    js: JsObject,
+    uris: List[URI]
+  ): JsObject = {
+    (js \ "meta").asOpt[JsObject].getOrElse(JsObject.empty) |
+       (meta => meta + ("profile" -> Json.toJson(uris))) |
+       (meta => js + ("meta" -> meta))
+    }
+
+
+
+  def format[R <: Resource](
+    implicit
+    uneq: R <:!< HasLOINCCode,
+    rs: Resource.Type[R],
+    pfs: Meta.Profiles[R] 
+  ): Format[R] = macro formatImpl[R]
+
+
+  def formatImpl[R <: Resource](c: Context)(
+//    uneq: c.Expr[R <:!< HasLOINCCode],
+//    rs: c.Expr[Resource.Type[R]],
+//    pfs: c.Expr[Meta.Profiles[R]] 
+    uneq: c.Tree,
+    rs: c.Tree,
+    pfs: c.Tree
+  ): c.Tree = {
+
+    import c.universe._
+
+    q"""
+    Format(
+      Json.reads[R].composeWith(
+        Reads(
+          js =>
+            for {
+              rsType <- (js \ "resourceType").validate[String]
+                          .filter(JsError(s"Invalid or missing attribute '$$RESOURCE_TYPE'; expected $${rs.name}"))(_ == rs.name)
+              profile <- (js \ "meta" \ "profile").validate[List[URI]]
+                          .filter(JsError(s"Invalid or unexpected profiles; expected $${pfs.list}"))(l => pfs.list forall l.contains)
+            } yield js
+        )
+      ),
+      Json.writes[R].transform(
+        js =>
+          js.as[JsObject] |
+            (_ + (RESOURCE_TYPE -> JsString(rs.name))) |
+            (addProfiles(_,pfs.list))
+ 
+      )
+    )
+   """
+  }
+*/ 
+
+
 
 
   @annotation.implicitNotFound(
@@ -24,8 +89,8 @@ object FHIRJson
   )
   sealed trait FHIRFormat[T]
   {
-    def read(js: JsValue): JsResult[T]
-    def write(t: T): JsValue
+    def reads(js: JsValue): JsResult[T]
+    def writes(t: T): JsValue
   }
 
   object FHIRFormat
@@ -37,8 +102,8 @@ object FHIRJson
 
     implicit def toFormat[T](f: FHIRFormat[T]): Format[T] =
       Format[T](
-        Reads(f.read),
-        Writes(f.write)
+        Reads(f.reads),
+        Writes(f.writes)
       )
 
 
@@ -60,7 +125,7 @@ object FHIRJson
       ps: Meta.Profiles[R] 
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
-        def read(js: JsValue): JsResult[R] = {
+        def reads(js: JsValue): JsResult[R] = {
           for {
             rsType <- (js \ "resourceType").validate[String]
                         .filter(JsError(s"Invalid or missing attribute 'resourceType'; expected ${rs.name}"))(_ == rs.name)
@@ -75,7 +140,7 @@ object FHIRJson
           } yield result
         }
 
-        def write(r: R): JsValue = {
+        def writes(r: R): JsValue = {
           f.writes(r).as[JsObject] |
             (_ + ("resourceType" -> JsString(rs.name))) |
             (_ + ("type" -> JsString(bt.value))) |
@@ -97,7 +162,7 @@ object FHIRJson
       ps: Meta.Profiles[R]
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
-        def read(js: JsValue): JsResult[R] = {
+        def reads(js: JsValue): JsResult[R] = {
 
           for {
             rsType <- (js \ "resourceType").validate[String]
@@ -114,7 +179,7 @@ object FHIRJson
           } yield result
         }
 
-        def write(r: R): JsValue = {
+        def writes(r: R): JsValue = {
           f.writes(r).as[JsObject] |
             (_ + ("resourceType" -> JsString(rs.name))) |
             (_ + ("code"         -> Json.toJson(code.value))) |
@@ -128,7 +193,7 @@ object FHIRJson
       f: Format[R],
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
-        def read(js: JsValue): JsResult[R] = {
+        def reads(js: JsValue): JsResult[R] = {
 
           (js \ "code").validate[BasicCodeableConcept[LOINC]]
             .filter(
@@ -139,7 +204,7 @@ object FHIRJson
             .flatMap(_ => js.validate[R])
         }
 
-        def write(r: R): JsValue = {
+        def writes(r: R): JsValue = {
           f.writes(r).as[JsObject] |
             (_ + ("code" -> Json.toJson(code.value)))
         }
@@ -151,10 +216,10 @@ object FHIRJson
       f: Format[R],
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
-        def read(js: JsValue): JsResult[R] = {
+        def reads(js: JsValue): JsResult[R] = {
           js.validate[R]
         }
-        def write(r: R): JsValue = {
+        def writes(r: R): JsValue = {
           f.writes(r)
         }
       }
@@ -167,7 +232,7 @@ object FHIRJson
       ps: Meta.Profiles[R] 
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
-        def read(js: JsValue): JsResult[R] = {
+        def reads(js: JsValue): JsResult[R] = {
 
           for {
             rsType <- (js \ "resourceType").validate[String]
@@ -178,7 +243,7 @@ object FHIRJson
           } yield result
         }
 
-        def write(r: R): JsValue = {
+        def writes(r: R): JsValue = {
 
           f.writes(r).as[JsObject] |
             (_ + ("resourceType" -> JsString(rs.name))) |
@@ -198,7 +263,7 @@ object FHIRJson
     ps: Meta.Profiles[R] ,
     fhir: FHIRFormat[R]
   ): JsValue =
-    fhir.write(r)
+    fhir.writes(r)
 
 
   def read[R <: Resource](
@@ -208,7 +273,7 @@ object FHIRJson
     rs: Resource.Type[R],
     fhir: FHIRFormat[R]
   ): JsResult[R] = 
-    fhir.read(js)
+    fhir.reads(js)
 
 
   implicit class ResourceOps[R <: Resource](val r: R) extends AnyVal
