@@ -18,6 +18,9 @@ object Consent
 extends DomainResourceAttributes
 {
 
+  implicit def consentResourceType[C <: Consent] =
+    Resource.Type[C]("Consent")
+
 
   object Status extends CodedEnum
   {
