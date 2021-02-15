@@ -15,7 +15,8 @@ abstract class DiagnosticReport
 extends DomainResource
 with Event
 with HasStatus[DiagnosticReport.Status.Value]
-with HasLOINCCode
+with HasCode
+//with HasLOINCCode
 
 
 final object DiagnosticReport

@@ -14,8 +14,10 @@ object LOINC
 
   implicit val system = Coding.System[LOINC]("http://loinc.org")
 
-
-  sealed trait Code[T <: HasLOINCCode]{ val value: BasicCodeableConcept[LOINC] }
+/*
+  sealed trait Code[T <: HasLOINCCode]{
+    val value: BasicCodeableConcept[LOINC]
+  }
   object Code
   {
     def apply[T <: HasLOINCCode](implicit c: Code[T]) = c
@@ -26,14 +28,10 @@ object LOINC
     def apply[T <: HasLOINCCode](c: String, d: Option[String] = None) =
       new Code[T]{ val value = BasicCodeableConcept(LOINC(c,d)) }
   }
-
+*/
 }
 
 
-trait HasLOINCCode
-//trait HasLOINCCode {
-//  val code: BasicCodeableConcept[LOINC]
-//}
-
+//trait HasLOINCCode
 
 

@@ -9,6 +9,7 @@ import cats.data.NonEmptyList
 import play.api.libs.json._
 
 
+
 abstract class Resource
 object Resource
 {
@@ -39,6 +40,7 @@ object Resource
   }
 
 }
+
 
 trait ResourceAttributes
 {

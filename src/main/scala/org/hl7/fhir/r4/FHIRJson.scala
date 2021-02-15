@@ -154,6 +154,68 @@ object FHIRJson
         }
       }
 
+
+//    implicit def resourceLOINCCodedFormat[R <: Resource with HasCode](
+    implicit def resourceLOINCCodedFormat[R <: Resource with HasCode, S](
+      implicit
+      code: Code[R,S],
+      f: Format[R],
+      rs: Resource.Type[R],
+      ps: Meta.Profiles[R],
+      bcf: Format[BasicCodeableConcept[S]]
+    ): FHIRFormat[R] =
+      new FHIRFormat[R]{
+        def reads(js: JsValue): JsResult[R] = {
+
+          for {
+            rsType <- (js \ "resourceType").validate[String]
+                        .filter(JsError(s"Invalid or missing attribute 'resourceType'; expected ${rs.name}"))(_ == rs.name)
+            profile <- (js \ "meta" \ "profile").validate[List[URI]]
+                         .filter(JsError(s"Invalid or unexpected profiles; expected ${ps.list}"))(l => ps.list forall l.contains)
+            codeOk  <- (js \ "code").validate[BasicCodeableConcept[S]]
+                         .filter(
+                           JsError(s"Invalid or missing CodeableConcept attribute 'code'; expected ${code}")
+                         )(
+                           _.coding.head.code == code.value.coding.head.code
+                         )
+            result <- js.validate[R]
+          } yield result
+        }
+
+        def writes(r: R): JsValue = {
+          f.writes(r).as[JsObject] |
+            (_ + ("resourceType" -> JsString(rs.name))) |
+            (_ + ("code"         -> Json.toJson(code.value))) |
+            (addProfiles(_,ps.list))
+        }
+      }
+
+
+    implicit def backboneElementLOINCCodedFormat[R <: BackboneElement[_] with HasCode, S](
+      implicit
+      code: Code[R,S],
+      f: Format[R],
+      bcf: Format[BasicCodeableConcept[S]]
+    ): FHIRFormat[R] =
+      new FHIRFormat[R]{
+        def reads(js: JsValue): JsResult[R] = {
+
+          (js \ "code").validate[BasicCodeableConcept[S]]
+            .filter(
+              JsError(s"Invalid or missing CodeableConcept attribute 'code'; expected ${code}")
+            )(
+              _.coding.head.code == code.value.coding.head.code
+            )
+            .flatMap(_ => js.validate[R])
+        }
+
+        def writes(r: R): JsValue = {
+          f.writes(r).as[JsObject] |
+            (_ + ("code" -> Json.toJson(code.value)))
+        }
+      }
+
+/*
     implicit def resourceLOINCCodedFormat[R <: Resource with HasLOINCCode](
       implicit
       code: LOINC.Code[R],
@@ -209,10 +271,12 @@ object FHIRJson
             (_ + ("code" -> Json.toJson(code.value)))
         }
       }
+*/
 
     implicit def backboneElementFormat[R <: BackboneElement[_]](
       implicit
-      uneq: R <:!< HasLOINCCode,
+      uneq: R <:!< HasCode,
+//      uneq: R <:!< HasLOINCCode,
       f: Format[R],
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
@@ -226,7 +290,8 @@ object FHIRJson
 
     implicit def defaultResourceFormat[R <: Resource](
       implicit
-      uneq: R <:!< HasLOINCCode,
+      uneq: R <:!< HasCode,
+//      uneq: R <:!< HasLOINCCode,
       f: Format[R],
       rs: Resource.Type[R],
       ps: Meta.Profiles[R] 

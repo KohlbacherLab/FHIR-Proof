@@ -14,7 +14,8 @@ abstract class Observation
 extends DomainResource
 with Event
 with HasStatus[Observation.Status.Value]
-with HasLOINCCode
+with HasCode
+//with HasLOINCCode
 
 
 
@@ -104,7 +105,8 @@ with CanHaveValue[
 
 
 
-  abstract class ComponentElement extends BackboneElement[Many] with HasLOINCCode
+  abstract class ComponentElement extends BackboneElement[Many] with HasCode
+//  abstract class ComponentElement extends BackboneElement[Many] with HasLOINCCode
 
   object Component
   extends BackboneElementAttributes
