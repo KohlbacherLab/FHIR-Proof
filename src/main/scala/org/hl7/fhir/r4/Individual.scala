@@ -2,7 +2,8 @@ package org.hl7.fhir.r4
 
 
 
-import java.time.LocalDate
+//import java.time.LocalDate
+import java.time.temporal.Temporal
 
 
 trait Individual {
@@ -26,9 +27,9 @@ trait IndividualAttributes
     val gender: C[AdministrativeGender.Value]
   }
 
-  trait birthDate[C[_]]{
+  trait birthDate[D <: Temporal, C[+_]]{
     this: Individual =>
-    val birthDate: C[LocalDate]
+    val birthDate: C[D]
   }
 
 }

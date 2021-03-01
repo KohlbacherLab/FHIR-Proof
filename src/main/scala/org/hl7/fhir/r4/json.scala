@@ -490,6 +490,33 @@ object json
         }
       )
 
+    implicit def formatContainedResourceOptionalHead[H, T <: HList](
+      implicit 
+      cr: ForAll[Option[H] :: T, IsContainedResource],
+//      fh: Lazy[Format[H]],
+      fh: Lazy[FHIRFormat[H]],
+      ft: Format[T]
+    ): Format[Option[H] :: T] =
+      Format[Option[H] :: T](
+        Reads(
+          js =>
+            for {
+              arr <- js.validate[JsArray]
+              h   <- JsSuccess(
+                       arr.value.map(fh.value.reads)
+                         .find(_.isSuccess)
+                         .map(_.get)
+                     )
+              t   <- ft.reads(arr)
+            } yield h :: t
+        ),
+        Writes {
+//          case h :: t => Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
+          case hOpt :: t =>
+            hOpt.map(fh.value.writes).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
+        }
+      )
+
     import scala.collection.{BuildFrom, Factory}
 
     implicit def formatContainedResourceIterableHead[H, C[X] <: Iterable[X], T <: HList](
