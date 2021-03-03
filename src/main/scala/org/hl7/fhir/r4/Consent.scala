@@ -4,6 +4,7 @@ package org.hl7.fhir.r4
 
 import java.time.temporal.Temporal
 
+import cats.data.NonEmptyList
 
 
 abstract class Consent
@@ -11,6 +12,7 @@ extends DomainResource
 with HasStatus[Consent.Status.Value]
 {
   val scope: CodeableConcept with CodeableConcept.codingNel[Coding[Consent.Scope.Value]]
+  val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[_]]]
 }
 
 
@@ -47,6 +49,12 @@ extends DomainResourceAttributes
     implicit val format = json.formatCodedEnum(this)
   }
 
+/*
+  trait category[S]{
+    this: Consent =>
+    val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[S]]]
+  }
+*/
 
   trait patient[C[+_]]{
     this: Consent =>
@@ -57,7 +65,6 @@ extends DomainResourceAttributes
     this: Consent =>
     val dateTime: C[T]
   }
-
 
 
 

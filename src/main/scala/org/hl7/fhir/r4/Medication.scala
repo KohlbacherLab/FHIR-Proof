@@ -44,7 +44,6 @@ extends DomainResourceAttributes
   }
 
 
-//  abstract class IngredientElement[I: Ingredient.ValidItem] extends BackboneElement[Zero,Many]
   abstract class IngredientElement[I: Ingredient.ValidItem] extends BackboneElement[Many]
   {
     this: Ingredient.item[I] =>

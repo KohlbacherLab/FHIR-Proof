@@ -62,6 +62,14 @@ object json
     )
 
 
+  implicit val hnil: Format[HNil] =
+    Format[HNil](
+      Reads(_ => JsSuccess(HNil)),
+      Writes(_ => JsArray.empty)
+    )
+
+
+
   object backboneElements
   {
 
@@ -264,48 +272,31 @@ object json
       )
 
 /*
-    implicit def optionBBEIterableHead[H <: BackboneElement[Many], C[X] <: Iterable[X], T <: HList](
-      implicit
-      valid: IsValidBBEProduct[Option[C[H]] :: T],
-      fh: Lazy[Format[H]],
-      ft: Format[T],
-      fac: Factory[H,C[H]],
-      bf: BuildFrom[C[H],H,C[H]]
-    ): Format[Option[C[H]] :: T] =
-      Format[Option[C[H]] :: T](
-        Reads(
-          js => 
-            for {
-              arr <- js.validate[JsArray]
-              h   <- JsSuccess(
-                       Option(
-                         arr.value.map(fh.value.reads)
-                           .filter(_.isSuccess)
-                           .map(_.get) 
-                           .to(fac)
-                       )
-                       .filter(_.isEmpty)
-                     )           
-              t   <- ft.reads(js)
-            } yield h :: t
-        ), 
-        Writes {
-          case hOpt :: t =>
-            hOpt.map(_.map(fh.value.writes)).map(_.toIndexedSeq).map(new JsArray(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
-        }
-      )
-*/
     implicit val hnil: Format[HNil] =
       Format[HNil](
         Reads(_ => JsSuccess(HNil)),
         Writes(_ => JsArray.empty)
       )
+*/
 
   }
 
 
   object extensions
   {
+
+/*
+    implicit def formatExtensionSet[Exts <: Product, R](
+      implicit 
+      gen: Generic.Aux[Exts,R],
+      ext: Extension.IsValidExtension[R],
+      format: Format[R]
+    ): Format[Exts] =
+      Format[Exts](
+        Reads(js => format.reads(js).map(gen.from)),
+        Writes(crs => format.writes(gen.to(crs)))
+      )
+*/
 
     def format[V: Format, E <: SimpleExtension[V]](
       f: V => E
@@ -373,7 +364,8 @@ object json
             
         ),
         Writes {
-          case h :: t => Json.arr(fh.value.writes(h)) ++ Json.toJson(t).as[JsArray]
+          case h :: t => Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
+//          case h :: t => Json.arr(fh.value.writes(h)) ++ Json.toJson(t).as[JsArray]
         }
       )
 
@@ -436,17 +428,18 @@ object json
             
         ),
         Writes {
-          case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ Json.toJson(t).as[JsArray]
+          case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ ft.writes(t).as[JsArray]
+//          case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ Json.toJson(t).as[JsArray]
         }
       )
     
-    
+/*
     implicit val hnil: Format[HNil] =
       Format[HNil](
         Reads(_ => JsSuccess(HNil)),
         Writes(_ => JsArray.empty)
       )
-
+*/
   }
 
 
@@ -511,7 +504,6 @@ object json
             } yield h :: t
         ),
         Writes {
-//          case h :: t => Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
           case hOpt :: t =>
             hOpt.map(fh.value.writes).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
         }
@@ -548,13 +540,13 @@ object json
         }
       )
 
-
+/*
     implicit val hnil: Format[HNil] =
       Format[HNil](
         Reads(_ => JsSuccess(HNil)),
         Writes(_ => JsArray.empty)
       )
-
+*/
 
   }
 

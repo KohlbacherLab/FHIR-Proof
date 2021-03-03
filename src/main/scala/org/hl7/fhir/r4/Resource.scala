@@ -80,9 +80,6 @@ object Meta
     def apply[R <: Resource](uri: URI): Profiles[R] =
       new Profiles[R]{ val list = List(uri) } 
 
-//    def apply[R <: Resource](uri: String): Profiles[R] =
-//      apply[R](URI.create(uri))
-
     def apply[R <: Resource](uris: Seq[String]): Profiles[R] =
       new Profiles[R]{ val list = uris.map(URI.create).toList } 
 
