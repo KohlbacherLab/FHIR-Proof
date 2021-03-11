@@ -93,32 +93,22 @@ with CanHaveEncounter
     val addresses: NonEmptyList[Reference[Condition]]
   }
 
-/*
-  trait addresses[+C <: Condition, F[+_]]{
-    this: CarePlan =>
-    val addresses: F[List[Reference[C]]]
-  }
-  trait addressesNel[+C <: Condition]{
-    this: CarePlan =>
-    val addresses: NonEmptyList[Reference[C]]
-  }
-*/
  
   abstract class ActivityElement extends BackboneElement[Many]
   {
-    this: Activity.entry[_] =>
+    this: Activity.content[_] =>
   }
   object Activity extends BackboneElementAttributes
   {
 
-    sealed trait entry[+X]
+    sealed trait content[+X]
 
-    trait reference[+R <: Resource] extends entry[Reference[R]]{
+    trait reference[+R <: Resource] extends content[Reference[R]]{
       this: ActivityElement =>
       val reference: Reference[R]
     }
 
-    trait detail[+D <: DetailElement] extends entry[D]{
+    trait detail[+D <: DetailElement] extends content[D]{
       this: ActivityElement =>
       val detail: D
     }
@@ -137,6 +127,7 @@ with CanHaveEncounter
     this: CarePlan =>
     val activity: C[List[A]]
   }
+
   trait activityNel[+A <: ActivityElement]{
     this: CarePlan =>
     val activity: NonEmptyList[A]

@@ -22,6 +22,7 @@ final object ServiceRequest
 extends DomainResourceAttributes
 with RequestAttributes
 with CanHaveEncounter
+with CanHaveNotes
 {
 
 
