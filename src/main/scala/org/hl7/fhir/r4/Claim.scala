@@ -15,7 +15,7 @@ extends DomainResource
    with Claim.status
 {
 
-  this: Claim.created[_] =>
+  this: Claim.created[_] with Claim.provider[_] =>
 
   val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
 
@@ -24,8 +24,6 @@ extends DomainResource
   val priority: CodeableConcept with CodeableConcept.codingNel[Coding[ProcessPriority.Value]]
 
   val patient: Reference[Patient]
-
-  val provider: Reference[DomainResource]
 
 }
 
@@ -89,13 +87,19 @@ with RequestAttributes
   }
 
 
-  trait prescription[R <: Resource,C[_]]{
+  trait prescription[R <: Resource with Request,C[+_]]{
     this: Claim =>
     val prescription: C[Reference[R]]
   }
 
 
-  trait supportingInfo[R <: Resource,C[_]]{
+  trait provider[R <: DomainResource]{
+    this: Claim =>
+    val provider: Reference[R]
+  }
+
+
+  trait supportingInfo[R <: Resource,C[+_]]{
     this: Claim =>
     val supportingInfo: C[List[Reference[R]]]
   }

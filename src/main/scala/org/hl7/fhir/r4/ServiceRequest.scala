@@ -82,15 +82,14 @@ with CanHaveNotes
   }
 
 
-  trait specimen[+S <: Specimen, C[+_]]{
+  trait specimen[C[+_]]{
     this: ServiceRequest =>
-    val specimen: C[List[Reference[S]]]
+    val specimen: C[List[Reference[Specimen]]]
   }
-  trait specimenNel[+S <: Specimen]{
+  trait specimenNel{
     this: ServiceRequest =>
-    val specimen: NonEmptyList[Reference[S]]
+    val specimen: NonEmptyList[Reference[Specimen]]
   }
-
 
 
   trait supportingInfo[R <: Resource,C[_]]{

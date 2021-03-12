@@ -271,14 +271,6 @@ object json
         }
       )
 
-/*
-    implicit val hnil: Format[HNil] =
-      Format[HNil](
-        Reads(_ => JsSuccess(HNil)),
-        Writes(_ => JsArray.empty)
-      )
-*/
-
   }
 
 
@@ -365,7 +357,6 @@ object json
         ),
         Writes {
           case h :: t => Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
-//          case h :: t => Json.arr(fh.value.writes(h)) ++ Json.toJson(t).as[JsArray]
         }
       )
 
@@ -429,17 +420,9 @@ object json
         ),
         Writes {
           case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ ft.writes(t).as[JsArray]
-//          case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ Json.toJson(t).as[JsArray]
         }
       )
     
-/*
-    implicit val hnil: Format[HNil] =
-      Format[HNil](
-        Reads(_ => JsSuccess(HNil)),
-        Writes(_ => JsArray.empty)
-      )
-*/
   }
 
 
@@ -539,14 +522,6 @@ object json
           case hs :: t => new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ ft.writes(t).as[JsArray]
         }
       )
-
-/*
-    implicit val hnil: Format[HNil] =
-      Format[HNil](
-        Reads(_ => JsSuccess(HNil)),
-        Writes(_ => JsArray.empty)
-      )
-*/
 
   }
 

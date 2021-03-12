@@ -3,7 +3,7 @@ package org.hl7.fhir.r4
 
 
 
-trait Organization extends Resource
+trait Organization extends DomainResource
 
 
 object Organization
