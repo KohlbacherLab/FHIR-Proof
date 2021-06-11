@@ -21,67 +21,6 @@ object FHIRJson
   }
 
 
-/*
-  private val RESOURCE_TYPE = "resourceType"
-
-
-  private def addProfiles(
-    js: JsObject,
-    uris: List[URI]
-  ): JsObject = {
-    (js \ "meta").asOpt[JsObject].getOrElse(JsObject.empty) |
-       (meta => meta + ("profile" -> Json.toJson(uris))) |
-       (meta => js + ("meta" -> meta))
-    }
-
-
-
-  def format[R <: Resource](
-    implicit
-    uneq: R <:!< HasLOINCCode,
-    rs: Resource.Type[R],
-    pfs: Meta.Profiles[R] 
-  ): Format[R] = macro formatImpl[R]
-
-
-  def formatImpl[R <: Resource](c: Context)(
-//    uneq: c.Expr[R <:!< HasLOINCCode],
-//    rs: c.Expr[Resource.Type[R]],
-//    pfs: c.Expr[Meta.Profiles[R]] 
-    uneq: c.Tree,
-    rs: c.Tree,
-    pfs: c.Tree
-  ): c.Tree = {
-
-    import c.universe._
-
-    q"""
-    Format(
-      Json.reads[R].composeWith(
-        Reads(
-          js =>
-            for {
-              rsType <- (js \ "resourceType").validate[String]
-                          .filter(JsError(s"Invalid or missing attribute '$$RESOURCE_TYPE'; expected $${rs.name}"))(_ == rs.name)
-              profile <- (js \ "meta" \ "profile").validate[List[URI]]
-                          .filter(JsError(s"Invalid or unexpected profiles; expected $${pfs.list}"))(l => pfs.list forall l.contains)
-            } yield js
-        )
-      ),
-      Json.writes[R].transform(
-        js =>
-          js.as[JsObject] |
-            (_ + (RESOURCE_TYPE -> JsString(rs.name))) |
-            (addProfiles(_,pfs.list))
- 
-      )
-    )
-   """
-  }
-*/ 
-
-
-
 
   @annotation.implicitNotFound(
   """Couldn't derive FHIRFormat for ${T}.
@@ -93,10 +32,21 @@ object FHIRJson
     def writes(t: T): JsValue
   }
 
+
   object FHIRFormat
   {
 
     def apply[T](implicit f: FHIRFormat[T]) = f
+
+    def apply[T](r: Reads[T], w: Writes[T]): FHIRFormat[T] =
+      new FHIRFormat[T]{
+        def reads(js: JsValue): JsResult[T] = r.reads(js)
+        def writes(t: T): JsValue = w.writes(t)
+      }
+
+    def apply[T](format: Format[T]): FHIRFormat[T] =
+      FHIRFormat(format,format)
+
 
     import scala.language.implicitConversions
 
@@ -117,6 +67,57 @@ object FHIRJson
     }
 
 
+    import play.api.libs.functional.syntax._
+
+
+    private def readResourceType[R <: Resource](implicit rs: Resource.Type[R]) =
+      (JsPath \ "resourceType").read[String]
+        .filter(JsonValidationError(s"Invalid or missing attribute 'resourceType'; expected ${rs.name}"))(_ == rs.name)
+
+    private def readProfiles[R <: Resource](implicit profiles: Meta.Profiles[R]) =
+      (JsPath \ "meta" \ "profile").read[List[URI]]
+        .filter(JsonValidationError(s"Invalid or unexpected profiles; expected ${profiles.list}"))(l => profiles.list.forall(l.contains))
+
+
+    implicit def bundleFormat[R <: Bundle](
+      implicit
+      format: Format[R],
+      rs: Resource.Type[R],
+      bt: Bundle.Type[R],
+      ps: Meta.Profiles[R] 
+    ): FHIRFormat[R] =
+      new FHIRFormat[R]{
+        def reads(js: JsValue): JsResult[R] = 
+        (
+          readResourceType[R] and
+           
+          (JsPath \ "type").read[String]
+            .filter(JsonValidationError("Invalid or missing Bundle 'type'"))(_ == bt.value) and
+           
+          readProfiles[R] and
+
+          format
+        )(
+          (_,_,_,t) => t
+        )
+        .reads(js)
+
+        def writes(r: R): JsValue = {
+          format.writes(r).as[JsObject] |
+            (_ + ("resourceType" -> JsString(rs.name))) |
+            (_ + ("type"         -> JsString(bt.value))) |
+            (addProfiles(_,ps.list)) |
+            (js =>
+               r match {
+                 case b: Bundle.HasTotal => js + ("total" -> JsNumber(b.total))
+                 case _                  => js
+               }
+            )
+        }
+      }
+      
+
+/*
     implicit def bundleFormat[R <: Bundle](
       implicit
       f: Format[R],
@@ -153,20 +154,40 @@ object FHIRJson
             )
         }
       }
+*/
 
+    private def readCode[R <: HasCode,S](
+      implicit
+      code: Code[R,S],
+      bcf: Format[BasicCodeableConcept[S]]
+    ) =
+      (JsPath \ "code").read[BasicCodeableConcept[S]]
+        .filter(
+          JsonValidationError(s"Invalid or missing CodeableConcept attribute 'code'; expected ${code}")
+        )(
+          _.coding.head.code == code.value.coding.head.code
+        )
 
-//    implicit def resourceLOINCCodedFormat[R <: Resource with HasCode](
     implicit def resourceLOINCCodedFormat[R <: Resource with HasCode, S](
       implicit
       code: Code[R,S],
-      f: Format[R],
+      format: Format[R],
       rs: Resource.Type[R],
       ps: Meta.Profiles[R],
       bcf: Format[BasicCodeableConcept[S]]
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
         def reads(js: JsValue): JsResult[R] = {
-
+          (
+            readResourceType[R] and
+            readProfiles[R] and 
+            readCode[R,S] and
+            format
+          )(
+            (_,_,_,t) => t
+          )
+          .reads(js) 
+/*
           for {
             rsType <- (js \ "resourceType").validate[String]
                         .filter(JsError(s"Invalid or missing attribute 'resourceType'; expected ${rs.name}"))(_ == rs.name)
@@ -180,10 +201,11 @@ object FHIRJson
                          )
             result <- js.validate[R]
           } yield result
+*/
         }
 
         def writes(r: R): JsValue = {
-          f.writes(r).as[JsObject] |
+          format.writes(r).as[JsObject] |
             (_ + ("resourceType" -> JsString(rs.name))) |
             (_ + ("code"         -> Json.toJson(code.value))) |
             (addProfiles(_,ps.list))
@@ -194,12 +216,19 @@ object FHIRJson
     implicit def backboneElementLOINCCodedFormat[R <: BackboneElement[_] with HasCode, S](
       implicit
       code: Code[R,S],
-      f: Format[R],
+      format: Format[R],
       bcf: Format[BasicCodeableConcept[S]]
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
         def reads(js: JsValue): JsResult[R] = {
-
+          (
+            readCode[R,S] and
+            format
+          )(
+            (_,t) => t
+          )
+          .reads(js) 
+/*
           (js \ "code").validate[BasicCodeableConcept[S]]
             .filter(
               JsError(s"Invalid or missing CodeableConcept attribute 'code'; expected ${code}")
@@ -207,10 +236,11 @@ object FHIRJson
               _.coding.head.code == code.value.coding.head.code
             )
             .flatMap(_ => js.validate[R])
+*/
         }
 
         def writes(r: R): JsValue = {
-          f.writes(r).as[JsObject] |
+          format.writes(r).as[JsObject] |
             (_ + ("code" -> Json.toJson(code.value)))
         }
       }
@@ -276,7 +306,6 @@ object FHIRJson
     implicit def backboneElementFormat[R <: BackboneElement[_]](
       implicit
       uneq: R <:!< HasCode,
-//      uneq: R <:!< HasLOINCCode,
       f: Format[R],
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
@@ -291,14 +320,21 @@ object FHIRJson
     implicit def defaultResourceFormat[R <: Resource](
       implicit
       uneq: R <:!< HasCode,
-//      uneq: R <:!< HasLOINCCode,
-      f: Format[R],
+      format: Format[R],
       rs: Resource.Type[R],
       ps: Meta.Profiles[R] 
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
         def reads(js: JsValue): JsResult[R] = {
-
+          (
+            readResourceType[R] and
+            readProfiles[R] and 
+            format
+          )(
+            (_,_,t) => t
+          )
+          .reads(js) 
+/*
           for {
             rsType <- (js \ "resourceType").validate[String]
                         .filter(JsError(s"Invalid or missing attribute 'resourceType'; expected ${rs.name}"))(_ == rs.name)
@@ -306,11 +342,11 @@ object FHIRJson
                          .filter(JsError(s"Invalid or unexpected profiles; expected ${ps.list}"))(l => ps.list forall l.contains)
             result <- js.validate[R]
           } yield result
+*/
         }
 
         def writes(r: R): JsValue = {
-
-          f.writes(r).as[JsObject] |
+          format.writes(r).as[JsObject] |
             (_ + ("resourceType" -> JsString(rs.name))) |
             (addProfiles(_,ps.list))
 

@@ -35,7 +35,8 @@ object Resource
   object HasId
   {
     def apply[R](implicit id: HasId[R]) = id
-    implicit def withId[R <: { val id: String }]: HasId[R] =
+
+    implicit def withId[R <: Resource { val id: String }]: HasId[R] =
       new HasId[R]{} 
   }
 
@@ -97,6 +98,12 @@ abstract class DomainResource
 extends Resource
 with ModifierExtensible
 
+
+trait ContainedResources {
+  this: Product => 
+}
+
+
 trait DomainResourceAttributes
 extends ResourceAttributes
 with ModifierExtensibleAttributes
@@ -112,7 +119,8 @@ with ModifierExtensibleAttributes
     val identifier: NonEmptyList[Identifier]
   }
 
-  trait contained[+CRs <: Product]{
+//  trait contained[+CRs <: Product]{
+  trait contained[+CRs <: ContainedResources]{
     this: DomainResource =>
     val contained: CRs
   }

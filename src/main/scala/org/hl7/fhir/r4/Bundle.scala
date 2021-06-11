@@ -90,9 +90,9 @@ object Bundle
 
     implicit def format[R <: Resource](
       implicit
-      fhir: FHIRFormat[R]
+      f: FHIRFormat[R]
     ): Format[EntryOf[R]] = {
-      implicit val f: Format[R] = fhir
+      implicit val format: Format[R] = f
       Json.format[EntryOf[R]]
     }
 

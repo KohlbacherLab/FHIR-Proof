@@ -15,11 +15,14 @@ import shapeless.{
 import play.api.libs.json._
 
 
-trait Extension
+trait Extension {
+  this: Product =>
+}
 
 
 abstract class SimpleExtension[+V: Extension.ValidValue] extends Extension
 {
+  this: Product =>
   val value: V
 }
 

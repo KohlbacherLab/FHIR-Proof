@@ -13,21 +13,6 @@ import cats.data.NonEmptyList
 object json
 {
 
-  def format[K](m: Map[K,String]): Format[K] = 
-    Format(
-      Reads(
-        _.validate[String]
-         .flatMap(
-           s => m.find { case (_,v) => v == s }
-                 .map(_._1)
-                 .map(JsSuccess(_))
-                 .getOrElse(JsError(s"Invalid value $s, expected one of ${m.values}"))
-         )
-      ),
-      Writes(k => Json.toJson(m(k)))
-    )
-
-
   def formatCodedEnum[E <: CodedEnum](
     e: E
   ): Format[E#Value] =
@@ -277,8 +262,7 @@ object json
   object extensions
   {
 
-/*
-    implicit def formatExtensionSet[Exts <: Product, R](
+    implicit def formatExtensionSet[Exts <: ExtensionSet, R](
       implicit 
       gen: Generic.Aux[Exts,R],
       ext: Extension.IsValidExtension[R],
@@ -288,7 +272,7 @@ object json
         Reads(js => format.reads(js).map(gen.from)),
         Writes(crs => format.writes(gen.to(crs)))
       )
-*/
+
 
     def format[V: Format, E <: SimpleExtension[V]](
       f: V => E
@@ -335,6 +319,7 @@ object json
         )
       )
     
+//    implicit def extensionHList[H: Extension.IsValidExtension, T <: HList](
     implicit def extensionHList[H, T <: HList](
       implicit
       exts: Extension.IsValidExtension[H :: T],
@@ -360,6 +345,7 @@ object json
         }
       )
 
+//    implicit def optionExtensionHList[H: Extension.IsValidExtension, T <: HList](
     implicit def optionExtensionHead[H, T <: HList](
       implicit
       exts: Extension.IsValidExtension[H :: T],
@@ -392,6 +378,7 @@ object json
     
     import scala.collection.{BuildFrom, Factory}
     
+//    implicit def formatIterableHead[H: Extension.IsValidExtension, C[X] <: Iterable[X], T <: HList](
     implicit def formatIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit
       exts: Extension.IsValidExtension[C[H] :: T],
@@ -431,7 +418,10 @@ object json
 
     import DomainResource._
 
-    implicit def formatContainedResourceSet[CRs <: Product, R](
+    def format[R](implicit f: Format[R]) = f
+
+
+    implicit def formatContainedResourceSet[CRs <: ContainedResources, R](
       implicit 
       gen: Generic.Aux[CRs,R],
       format: Format[R]
@@ -443,10 +433,10 @@ object json
 
     import FHIRJson._
 
+//    implicit def formatContainedResourceHead[H: IsContainedResource, T <: HList](
     implicit def formatContainedResourceHead[H, T <: HList](
       implicit 
       cr: ForAll[H :: T, IsContainedResource],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[H :: T] =
@@ -466,10 +456,10 @@ object json
         }
       )
 
+//    implicit def formatContainedResourceOptionalHead[H: IsContainedResource, T <: HList](
     implicit def formatContainedResourceOptionalHead[H, T <: HList](
       implicit 
       cr: ForAll[Option[H] :: T, IsContainedResource],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[Option[H] :: T] =
@@ -494,10 +484,10 @@ object json
 
     import scala.collection.{BuildFrom, Factory}
 
+//    implicit def formatContainedResourceIterableHead[H: IsContainedResource, C[X] <: Iterable[X], T <: HList](
     implicit def formatContainedResourceIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit 
       cr: ForAll[C[H] :: T, IsContainedResource],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
       fac: Factory[H,C[H]],

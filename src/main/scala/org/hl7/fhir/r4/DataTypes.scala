@@ -36,6 +36,10 @@ object PositiveInt
 }
 
 
+trait ExtensionSet {
+  this: Product =>
+}
+
 trait Extensible
 trait ExtensibleAttributes
 {
@@ -50,7 +54,8 @@ trait ExtensibleAttributes
     val extension: NonEmptyList[E]
   }
 
-  trait extensions[+E <: Product, C[+_]]{ 
+//  trait extensions[+E <: Product, C[+_]]{ 
+  trait extensions[+E <: ExtensionSet, C[+_]]{ 
     this: Extensible =>
     val extension: C[E]
   }
@@ -211,6 +216,7 @@ object Coding extends ElementAttributes
   object System
   {
     def apply[C](implicit sys: System[C]): System[C] = sys
+
     def apply[C](sys: URI): System[C] = new System[C]{ val uri = sys }
     def apply[C](sys: String): System[C] = System[C](URI.create(sys))
   }
