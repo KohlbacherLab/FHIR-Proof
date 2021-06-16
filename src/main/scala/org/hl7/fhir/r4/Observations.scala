@@ -9,10 +9,11 @@ import shapeless.{:+:,CNil}
 
 
 abstract class SimpleObservation[+V: Observation.ValidValue]
-extends Observation
+extends ObservationSC
 {
 
   this: Observation.value[V]
         with Observation.subject[_ <: Resource,Required] =>
 
 }
+

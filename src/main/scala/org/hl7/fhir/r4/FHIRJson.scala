@@ -156,7 +156,7 @@ object FHIRJson
       }
 */
 
-    private def readCode[R <: HasCode,S](
+    private def readCode[R <: HasStaticCode,S](
       implicit
       code: Code[R,S],
       bcf: Format[BasicCodeableConcept[S]]
@@ -168,7 +168,7 @@ object FHIRJson
           _.coding.head.code == code.value.coding.head.code
         )
 
-    implicit def resourceLOINCCodedFormat[R <: Resource with HasCode, S](
+    implicit def resourceLOINCCodedFormat[R <: Resource with HasStaticCode, S](
       implicit
       code: Code[R,S],
       format: Format[R],
@@ -213,7 +213,7 @@ object FHIRJson
       }
 
 
-    implicit def backboneElementLOINCCodedFormat[R <: BackboneElement[_] with HasCode, S](
+    implicit def backboneElementLOINCCodedFormat[R <: BackboneElement[_] with HasStaticCode, S](
       implicit
       code: Code[R,S],
       format: Format[R],
@@ -305,7 +305,7 @@ object FHIRJson
 
     implicit def backboneElementFormat[R <: BackboneElement[_]](
       implicit
-      uneq: R <:!< HasCode,
+      uneq: R <:!< HasStaticCode,
       f: Format[R],
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
@@ -319,7 +319,7 @@ object FHIRJson
 
     implicit def defaultResourceFormat[R <: Resource](
       implicit
-      uneq: R <:!< HasCode,
+      uneq: R <:!< HasStaticCode,
       format: Format[R],
       rs: Resource.Type[R],
       ps: Meta.Profiles[R] 

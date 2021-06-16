@@ -9,13 +9,27 @@ import shapeless.{:+:,CNil}
 import cats.data.NonEmptyList
 
 
-
+/*
 abstract class Observation
 extends DomainResource
 with Event
 with HasStatus[Observation.Status.Value]
-with HasCode
-//with HasLOINCCode
+with HasStaticCode
+*/
+
+
+sealed abstract class Observation
+extends DomainResource
+   with Event
+   with HasStatus[Observation.Status.Value]
+
+abstract class ObservationSC
+extends Observation
+   with HasStaticCode
+
+abstract class ObservationDC[S]
+extends Observation
+   with HasCode[S]
 
 
 
@@ -104,9 +118,17 @@ with CanHaveValue[
   }
 
 
+//  abstract class ComponentElement extends BackboneElement[Many] with HasStaticCode
+  sealed abstract class ComponentElement extends BackboneElement[Many]
 
-  abstract class ComponentElement extends BackboneElement[Many] with HasCode
-//  abstract class ComponentElement extends BackboneElement[Many] with HasLOINCCode
+  abstract class ComponentElementSC
+  extends ComponentElement
+     with HasStaticCode
+
+  abstract class ComponentElementDC[S]
+  extends ComponentElement
+     with HasCode[S]
+
 
   object Component
   extends BackboneElementAttributes

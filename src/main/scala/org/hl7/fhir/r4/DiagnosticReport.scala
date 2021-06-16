@@ -10,13 +10,28 @@ import cats.data.NonEmptyList
 import shapeless.{:+:, CNil}
 
 
-
+/*
 abstract class DiagnosticReport
 extends DomainResource
 with Event
 with HasStatus[DiagnosticReport.Status.Value]
-with HasCode
-//with HasLOINCCode
+with HasStaticCode
+*/
+
+sealed abstract class DiagnosticReport
+extends DomainResource
+with Event
+with HasStatus[DiagnosticReport.Status.Value]
+
+
+abstract class DiagnosticReportSC
+extends DiagnosticReport
+   with HasStaticCode
+
+
+abstract class DiagnosticReportDC[S]
+extends DiagnosticReport
+   with HasCode[S]
 
 
 final object DiagnosticReport
@@ -49,12 +64,6 @@ with CanHaveEffective[Temporal :+: Period[_] :+: CNil]
     this: DiagnosticReport =>
     val issued: C[T]
   }
-/*
-  trait issued[C[_]]{
-    this: DiagnosticReport =>
-    val issued: C[Instant]
-  }
-*/
 
   trait specimen[+S <: Specimen, C[+_]]{
     this: DiagnosticReport =>
