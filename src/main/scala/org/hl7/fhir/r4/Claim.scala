@@ -17,11 +17,13 @@ extends DomainResource
 
   this: Claim.created[_] with Claim.provider[_] =>
 
-  val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
+//  val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
+  val `type`: CodeableConcept with CodeableConcept.codingNel[CodingStatic[Claim.Type.Value]]
 
   val use: Claim.Use.Value
 
-  val priority: CodeableConcept with CodeableConcept.codingNel[Coding[ProcessPriority.Value]]
+//  val priority: CodeableConcept with CodeableConcept.codingNel[Coding[ProcessPriority.Value]]
+  val priority: CodeableConcept with CodeableConcept.codingNel[CodingStatic[ProcessPriority.Value]]
 
   val patient: Reference[Patient]
 
@@ -63,7 +65,8 @@ with RequestAttributes
      val Vision        = Val("vision"       ,"Vision")
 
      implicit val system =
-       Coding.System[Value]("http://terminology.hl7.org/CodeSystem/claim-type")
+       CodingSystem[Value]("http://terminology.hl7.org/CodeSystem/claim-type")
+//       Coding.System[Value]("http://terminology.hl7.org/CodeSystem/claim-type")
 
      implicit val format = json.formatCodedEnum(this)
   }

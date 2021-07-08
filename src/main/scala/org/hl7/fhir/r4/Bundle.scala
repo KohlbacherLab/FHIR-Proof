@@ -6,7 +6,7 @@ import java.time.Instant
 
 import cats.data.NonEmptyList
 
-import shapeless.{:+:, CNil, Generic, HList, ::, HNil, Lazy}
+import shapeless.{:+:, CNil, Generic, HList, ::, HNil, Lazy, <:!<}
 import shapeless.{HList}
 
 import play.api.libs.json._
@@ -62,9 +62,9 @@ object Bundle
 
   object Entry extends BackboneElementAttributes
   {
-    trait fullUrl{
+    trait fullUrl[C[_]]{
       this: EntryElement =>
-      val fullUrl: URI
+      val fullUrl: C[URI]
     }
     trait resource[+R <: Resource]{
       this: EntryElement =>
@@ -73,18 +73,43 @@ object Bundle
   }
 
   case class EntryOf[+R <: Resource](
-    resource: R
+    resource: R,
+//    fullUrl: Option[URI]
   ) 
   extends EntryElement
      with Entry.resource[R]
+//     with Entry.fullUrl[Option]
 
 
   object EntryOf
   {
+/*
+    def apply[R <: DomainResource { val identifier: NonEmptyList[Identifier] }](
+      r: R
+    ): EntryOf[R] = {
 
-//    implicit def format[R <: Resource: Format]: Format[EntryOf[R]] = {
-//      Json.format[EntryOf[R]]
-//    }
+      import scala.language.reflectiveCalls
+
+      EntryOf(
+        r,
+        Some(URI.create(s"urn:uuid:${r.asInstanceOf[{ val identifier: NonEmptyList[Identifier] }].identifier.head.value}"))
+      )
+    }
+
+    def apply[R <: Resource { val identifier: Identifier }](
+      r: R
+    )(
+      implicit nr: R <:!< DomainResource
+    ): EntryOf[R] = {
+
+      import scala.language.reflectiveCalls
+
+      EntryOf(
+        r,
+        Some(URI.create(s"urn:uuid:${r.asInstanceOf[{ val identifier: Identifier }].identifier.value}"))
+      )
+    }
+*/
 
     import FHIRJson._
 
@@ -152,7 +177,7 @@ object Bundle
   abstract class SearchSet extends Bundle with HasTotal
   {
     this: entry[_] =>
-    val total: Int
+
   }
 */
 

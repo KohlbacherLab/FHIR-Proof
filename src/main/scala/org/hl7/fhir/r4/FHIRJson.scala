@@ -107,12 +107,14 @@ object FHIRJson
             (_ + ("resourceType" -> JsString(rs.name))) |
             (_ + ("type"         -> JsString(bt.value))) |
             (addProfiles(_,ps.list)) |
-            (js =>
+            (js => {
+               import scala.language.reflectiveCalls
+
                r match {
                  case b: Bundle.HasTotal => js + ("total" -> JsNumber(b.total))
                  case _                  => js
                }
-            )
+            })
         }
       }
       
@@ -159,9 +161,11 @@ object FHIRJson
     private def readCode[R <: HasStaticCode,S](
       implicit
       code: Code[R,S],
-      bcf: Format[BasicCodeableConcept[S]]
+      bcf: Format[CodeableConceptStatic[S]]
+//      bcf: Format[BasicCodeableConcept[S]]
     ) =
-      (JsPath \ "code").read[BasicCodeableConcept[S]]
+//      (JsPath \ "code").read[BasicCodeableConcept[S]]
+      (JsPath \ "code").read[CodeableConceptStatic[S]]
         .filter(
           JsonValidationError(s"Invalid or missing CodeableConcept attribute 'code'; expected ${code}")
         )(
@@ -174,7 +178,8 @@ object FHIRJson
       format: Format[R],
       rs: Resource.Type[R],
       ps: Meta.Profiles[R],
-      bcf: Format[BasicCodeableConcept[S]]
+      bcf: Format[CodeableConceptStatic[S]]
+//      bcf: Format[BasicCodeableConcept[S]]
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
         def reads(js: JsValue): JsResult[R] = {
@@ -217,7 +222,8 @@ object FHIRJson
       implicit
       code: Code[R,S],
       format: Format[R],
-      bcf: Format[BasicCodeableConcept[S]]
+      bcf: Format[CodeableConceptStatic[S]]
+//      bcf: Format[BasicCodeableConcept[S]]
     ): FHIRFormat[R] =
       new FHIRFormat[R]{
         def reads(js: JsValue): JsResult[R] = {

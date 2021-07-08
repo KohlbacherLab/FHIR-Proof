@@ -11,8 +11,10 @@ abstract class Consent
 extends DomainResource
 with HasStatus[Consent.Status.Value]
 {
-  val scope: CodeableConcept with CodeableConcept.codingNel[Coding[Consent.Scope.Value]]
-  val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[_]]]
+//  val scope: CodeableConcept with CodeableConcept.codingNel[Coding[Consent.Scope.Value]]
+//  val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[_]]]
+  val scope: CodeableConcept with CodeableConcept.codingNel[CodingStatic[Consent.Scope.Value]]
+  val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding]]
 }
 
 
@@ -44,7 +46,8 @@ extends DomainResourceAttributes
     val PatientPrivacy = Val("patient-privacy","Privacy Consent")
     val Treatment      = Val("treatment","Treatment")
 
-    implicit val system = Coding.System[Scope.Value]("http://terminology.hl7.org/CodeSystem/consentscope")
+//    implicit val system = Coding.System[Scope.Value]("http://terminology.hl7.org/CodeSystem/consentscope")
+    implicit val system = CodingSystem[Scope.Value]("http://terminology.hl7.org/CodeSystem/consentscope")
 
     implicit val format = json.formatCodedEnum(this)
   }

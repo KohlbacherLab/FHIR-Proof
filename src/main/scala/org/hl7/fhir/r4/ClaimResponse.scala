@@ -18,7 +18,8 @@ extends DomainResource
 
   val status: Claim.Status.Value
 
-  val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
+//  val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
+  val `type`: CodeableConcept with CodeableConcept.codingNel[CodingStatic[Claim.Type.Value]]
 
   val use: Claim.Use.Value
 
@@ -51,7 +52,8 @@ with EventAttributes[Patient :+: CNil]
      val Partial  = Val("partial" ,"Partial Processing")
 
      implicit val system =
-       Coding.System[Outcome]("http://hl7.org/fhir/remittance-outcome")
+       CodingSystem[Outcome]("http://hl7.org/fhir/remittance-outcome")
+//       Coding.System[Outcome]("http://hl7.org/fhir/remittance-outcome")
 
      implicit val format = json.formatCodedEnum(this)
   }

@@ -18,7 +18,8 @@ object HL7v3ActEncounterCode extends CodedEnum
   val SS     = Val("SS","short stay")
   val VR     = Val("VR","virtual")
 
-  implicit val system = Coding.System[Value]("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode")
+  implicit val system = CodingSystem[Value]("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode")
+//  implicit val system = Coding.System[Value]("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode")
 
   implicit val format = json.formatCodedEnum(this)
 

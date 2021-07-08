@@ -40,7 +40,8 @@ extends DomainResourceAttributes
   }
 
   trait form[C[+_]]{
-    val form: C[CodeableConcept with CodeableConcept.codingNel[Coding[SNOMEDCT]]]
+    val form: C[CodeableConcept with CodeableConcept.codingNel[CodingStatic[SNOMEDCT]]]
+//    val form: C[CodeableConcept with CodeableConcept.codingNel[Coding[SNOMEDCT]]]
   }
 
 

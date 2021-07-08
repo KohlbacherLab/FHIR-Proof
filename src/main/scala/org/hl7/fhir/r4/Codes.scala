@@ -12,7 +12,8 @@ object ProcessPriority extends CodedEnum
    val Deferred = Val("deferred","Deferred")
 
    implicit val system =
-     Coding.System[ProcessPriority]("http://terminology.hl7.org/CodeSystem/processpriority")
+     CodingSystem[ProcessPriority]("http://terminology.hl7.org/CodeSystem/processpriority")
+//     Coding.System[ProcessPriority]("http://terminology.hl7.org/CodeSystem/processpriority")
 
    implicit val format = json.formatCodedEnum(this)
 }

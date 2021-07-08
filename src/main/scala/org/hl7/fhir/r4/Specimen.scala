@@ -14,7 +14,8 @@ sealed trait HL7v2Table0487
 object HL7v2Table0487
 {
   implicit val system =
-    Coding.System[HL7v2Table0487]("http://terminology.hl7.org/CodeSystem/v2-0487")
+    CodingSystem[HL7v2Table0487]("http://terminology.hl7.org/CodeSystem/v2-0487")
+//    Coding.System[HL7v2Table0487]("http://terminology.hl7.org/CodeSystem/v2-0487")
 }
 
 
@@ -55,7 +56,8 @@ with CanHaveNotes
 
   trait `type`[C[+_]]{
     this: Specimen =>
-    val `type`: C[BasicCodeableConcept[HL7v2Table0487]]
+    val `type`: C[CodeableConcept with CodeableConcept.codingNel[CodingStatic[HL7v2Table0487]]]
+//    val `type`: C[BasicCodeableConcept[HL7v2Table0487]]
   }
 
 

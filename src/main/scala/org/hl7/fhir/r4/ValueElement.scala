@@ -91,7 +91,8 @@ trait CanHaveValue[Vs <: shapeless.Coproduct] extends ValidValues[Vs]
     val valueRatio: F[R]
   }
 
-  trait valueCoding[+C <: Coding[_],F[+_]] extends value[C]{
+//  trait valueCoding[+C <: Coding[_],F[+_]] extends value[C]{
+  trait valueCoding[+C <: Coding,F[+_]] extends value[C]{
     val valueCoding: F[C]
   }
 
@@ -147,7 +148,8 @@ object ValueElement
 
   implicit def valueRatio[R <: Ratio] = ValueElement[R]("valueRatio")
 
-  implicit def valueCoding[C <: Coding[_]] = ValueElement[C]("valueCoding")
+  implicit def valueCoding[C <: Coding] = ValueElement[C]("valueCoding")
+//  implicit def valueCoding[C <: Coding[_]] = ValueElement[C]("valueCoding")
 
   implicit def valueCodeableConcept[CC <: CodeableConcept] = ValueElement[CC]("valueCodeableConcept")
 

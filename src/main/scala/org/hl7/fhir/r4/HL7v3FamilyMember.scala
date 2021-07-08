@@ -10,7 +10,8 @@ object HL7v3FamilyMember extends CodedEnum
   val EXT     = Val("EXT"    ,"extended family member")
 
   implicit val system =
-    Coding.System[Value]("http://terminology.hl7.org/ValueSet/v3-FamilyMember")
+//    Coding.System[Value]("http://terminology.hl7.org/ValueSet/v3-FamilyMember")
+    CodingSystem[Value]("http://terminology.hl7.org/ValueSet/v3-FamilyMember")
 
   implicit val format =
     json.formatCodedEnum(this)

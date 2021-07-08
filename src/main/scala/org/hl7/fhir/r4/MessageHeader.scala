@@ -21,12 +21,14 @@ extends DomainResourceAttributes
     Resource.Type[M]("MessageHeader")
 
 
-  type ValidEvent[T] = T IsIn (Coding[_] :+: URI :+: CNil)
+  type ValidEvent[T] = T IsIn (Coding :+: URI :+: CNil)
+//  type ValidEvent[T] = T IsIn (Coding[_] :+: URI :+: CNil)
 
 
   sealed trait event[+X]
 
-  trait eventCoding[T <: Coding[_]] extends event[T]{
+//  trait eventCoding[T <: Coding[_]] extends event[T]{
+  trait eventCoding[T <: Coding] extends event[T]{
     this: MessageHeader =>
     val eventCoding: T
   }

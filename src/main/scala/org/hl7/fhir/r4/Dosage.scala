@@ -19,14 +19,16 @@ object Dosage extends BackboneElementAttributes
        val Calculated = Val("calculated","Calculated")
        val Ordered    = Val("ordered","Ordered")
 
-        implicit val system = Coding.System[Type.Value]("http://hl7.org/fhir/ValueSet/dose-rate-type")
+        implicit val system = CodingSystem[Type.Value]("http://hl7.org/fhir/ValueSet/dose-rate-type")
+//        implicit val system = Coding.System[Type.Value]("http://hl7.org/fhir/ValueSet/dose-rate-type")
 
         implicit val format = json.formatCodedEnum(this) 
      }
 
     trait `type`[C[+_]]{ 
       this: DoseAndRateElement =>
-      val `type`: C[CodeableConcept with CodeableConcept.codingNel[Coding[Type.Value]]]
+      val `type`: C[CodeableConcept with CodeableConcept.codingNel[CodingStatic[Type.Value]]]
+//      val `type`: C[CodeableConcept with CodeableConcept.codingNel[Coding[Type.Value]]]
     }
 
 

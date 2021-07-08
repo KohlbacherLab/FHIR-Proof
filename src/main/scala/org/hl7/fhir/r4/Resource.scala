@@ -109,7 +109,7 @@ extends ResourceAttributes
 with ModifierExtensibleAttributes
 {
 
-  trait identifier[C[_]]{
+  trait identifier[C[+_]]{
     this: DomainResource =>
     val identifier: C[List[Identifier]]
   }
@@ -119,13 +119,14 @@ with ModifierExtensibleAttributes
     val identifier: NonEmptyList[Identifier]
   }
 
-//  trait contained[+CRs <: Product]{
   trait contained[+CRs <: ContainedResources]{
     this: DomainResource =>
     val contained: CRs
   }
 
 }
+object DomainResourceAttributes extends DomainResourceAttributes
+
 
 final object DomainResource
 {

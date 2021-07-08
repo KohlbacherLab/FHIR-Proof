@@ -13,7 +13,8 @@ abstract class Encounter
 extends DomainResource
 with HasStatus[Encounter.Status.Value]
 {
-  val `class`: Coding[HL7v3ActEncounterCode.Value]
+  val `class`: CodingStatic[HL7v3ActEncounterCode.Value]
+//  val `class`: Coding[HL7v3ActEncounterCode.Value]
 }
 
 
@@ -44,7 +45,6 @@ extends DomainResourceAttributes
   }
 
 
-//  abstract class StatusHistoryElement extends BackboneElement[Zero,Many]
   abstract class StatusHistoryElement extends BackboneElement[Many]
   {
     val status: Status.Value

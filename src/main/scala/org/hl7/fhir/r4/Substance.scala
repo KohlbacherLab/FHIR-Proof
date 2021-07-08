@@ -32,7 +32,8 @@ extends DomainResourceAttributes
   }
 
   trait code {
-    val code: CodeableConcept with CodeableConcept.codingNel[Coding[SNOMEDCT]]
+    val code: CodeableConcept with CodeableConcept.codingNel[CodingStatic[SNOMEDCT]]
+//    val code: CodeableConcept with CodeableConcept.codingNel[Coding[SNOMEDCT]]
   }
 
 

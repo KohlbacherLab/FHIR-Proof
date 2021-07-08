@@ -57,7 +57,8 @@ with IndividualAttributes
       val U = Val("U","Unknown")
 
       implicit val system =
-        Coding.System[Value]("http://hl7.org/fhir/ValueSet/patient-contactrelationship")
+        CodingSystem[Value]("http://hl7.org/fhir/ValueSet/patient-contactrelationship")
+//        Coding.System[Value]("http://hl7.org/fhir/ValueSet/patient-contactrelationship")
 
       implicit val formatRelationshipType =
         json.formatCodedEnum(this)
@@ -65,11 +66,13 @@ with IndividualAttributes
     
     trait relationship[C[_]] {
       this: ContactElement =>
-      val relationship: C[List[CodeableConcept with CodeableConcept.codingNel[Coding[RelationshipType.Value]]]] 
+      val relationship: C[List[CodeableConcept with CodeableConcept.codingNel[CodingStatic[RelationshipType.Value]]]] 
+//      val relationship: C[List[CodeableConcept with CodeableConcept.codingNel[Coding[RelationshipType.Value]]]] 
     }
     trait relationshipNel {
       this: ContactElement =>
-      val relationship: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[RelationshipType.Value]]] 
+      val relationship: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[CodingStatic[RelationshipType.Value]]] 
+//      val relationship: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[RelationshipType.Value]]] 
     }
 
     trait organization[C[_]] {

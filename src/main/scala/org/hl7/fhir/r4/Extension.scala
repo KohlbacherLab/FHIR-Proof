@@ -39,7 +39,8 @@ extends ValidValues[
   URL :+:
   UUID :+:
   Temporal :+:
-  Coding[_] :+:
+  Coding :+:
+//  Coding[_] :+:
   CodeableConcept :+: 
   CNil
 ] //TODO: complete list

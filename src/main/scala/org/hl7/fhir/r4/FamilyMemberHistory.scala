@@ -13,7 +13,8 @@ with HasStatus[FamilyMemberHistory.Status.Value]
 {
   val patient: Reference[Patient]
 
-  val relationship: CodeableConcept with CodeableConcept.codingNel[Coding[HL7v3FamilyMember.Value]]
+  val relationship: CodeableConcept with CodeableConcept.codingNel[CodingStatic[HL7v3FamilyMember.Value]]
+//  val relationship: CodeableConcept with CodeableConcept.codingNel[Coding[HL7v3FamilyMember.Value]]
 }
 
 
