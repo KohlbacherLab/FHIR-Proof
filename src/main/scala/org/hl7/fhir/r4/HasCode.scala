@@ -17,6 +17,7 @@ sealed trait Code[T <: HasStaticCode, S]{
 //  val value: BasicCodeableConcept[S] 
   val value: CodeableConceptStatic[S] 
 }
+
 object Code
 {
   def apply[T <: HasStaticCode, S: CodingSystem](implicit c: Code[T,S]) = c
@@ -26,6 +27,9 @@ object Code
 
   def apply[T <: HasStaticCode, S: CodingSystem](c: String, d: Option[String] = None): Code[T,S] =
     new Code[T,S]{ val value = CodeableConceptStatic(CodingStatic[S](c,d,None)) }
+
+  def apply[T <: HasStaticCode, S: CodingSystem](c: String, d: String): Code[T,S] =
+    Code[T,S](c,d)
 
 /*
   def apply[T <: HasStaticCode, S: Coding.System](implicit c: Code[T,S]) = c

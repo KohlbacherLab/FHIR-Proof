@@ -122,7 +122,6 @@ object json
     implicit def singleBBEHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[H :: T],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
     ): Format[H :: T] =
@@ -145,7 +144,6 @@ object json
     implicit def optionBBEHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[Option[H] :: T],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
     ): Format[Option[H] :: T] =
@@ -172,7 +170,6 @@ object json
       implicit
       ct: scala.reflect.ClassTag[H],
       valid: IsValidBBEProduct[Array[H] :: T],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[Array[H] :: T] =
@@ -202,7 +199,6 @@ object json
     implicit def bbeIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit
       valid: IsValidBBEProduct[C[H] :: T],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
       fac: Factory[H,C[H]],
@@ -231,7 +227,6 @@ object json
     implicit def bbeNelHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[NonEmptyList[H] :: T],
-//      fh: Lazy[Format[H]],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[NonEmptyList[H] :: T] =
@@ -319,7 +314,6 @@ object json
         )
       )
     
-//    implicit def extensionHList[H: Extension.IsValidExtension, T <: HList](
     implicit def extensionHList[H, T <: HList](
       implicit
       exts: Extension.IsValidExtension[H :: T],
@@ -345,7 +339,6 @@ object json
         }
       )
 
-//    implicit def optionExtensionHList[H: Extension.IsValidExtension, T <: HList](
     implicit def optionExtensionHead[H, T <: HList](
       implicit
       exts: Extension.IsValidExtension[H :: T],
@@ -378,7 +371,6 @@ object json
     
     import scala.collection.{BuildFrom, Factory}
     
-//    implicit def formatIterableHead[H: Extension.IsValidExtension, C[X] <: Iterable[X], T <: HList](
     implicit def formatIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit
       exts: Extension.IsValidExtension[C[H] :: T],
@@ -433,7 +425,6 @@ object json
 
     import FHIRJson._
 
-//    implicit def formatContainedResourceHead[H: IsContainedResource, T <: HList](
     implicit def formatContainedResourceHead[H, T <: HList](
       implicit 
       cr: ForAll[H :: T, IsContainedResource],
@@ -456,7 +447,6 @@ object json
         }
       )
 
-//    implicit def formatContainedResourceOptionalHead[H: IsContainedResource, T <: HList](
     implicit def formatContainedResourceOptionalHead[H, T <: HList](
       implicit 
       cr: ForAll[Option[H] :: T, IsContainedResource],
@@ -484,7 +474,6 @@ object json
 
     import scala.collection.{BuildFrom, Factory}
 
-//    implicit def formatContainedResourceIterableHead[H: IsContainedResource, C[X] <: Iterable[X], T <: HList](
     implicit def formatContainedResourceIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit 
       cr: ForAll[C[H] :: T, IsContainedResource],

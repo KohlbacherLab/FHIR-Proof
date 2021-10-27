@@ -13,11 +13,10 @@ object LOINC
 {
 
   implicit val system = CodingSystem[LOINC]("http://loinc.org")
-//  implicit val system = Coding.System[LOINC]("http://loinc.org")
+
+
+  def apply(code: String,display: String): LOINC =
+    LOINC(code,Some(display))
 
 }
-
-
-//trait HasLOINCCode
-
 
