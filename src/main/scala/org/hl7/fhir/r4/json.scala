@@ -110,6 +110,7 @@ object json
     implicit def formatBBEProduct[BBEs <: Product, R](
       implicit 
       gen: Generic.Aux[BBEs,R],
+//      format: Format[R]
       format: Lazy[Format[R]]
     ): Format[BBEs] = 
       Format[BBEs](
@@ -122,6 +123,7 @@ object json
     implicit def singleBBEHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[H :: T],
+//      fh: FHIRFormat[H],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
     ): Format[H :: T] =
@@ -144,6 +146,7 @@ object json
     implicit def optionBBEHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[Option[H] :: T],
+//      fh: FHIRFormat[H],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
     ): Format[Option[H] :: T] =
@@ -199,6 +202,7 @@ object json
     implicit def bbeIterableHead[H, C[X] <: Iterable[X], T <: HList](
       implicit
       valid: IsValidBBEProduct[C[H] :: T],
+//      fh: FHIRFormat[H],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T],
       fac: Factory[H,C[H]],
@@ -227,6 +231,7 @@ object json
     implicit def bbeNelHead[H, T <: HList](
       implicit
       valid: IsValidBBEProduct[NonEmptyList[H] :: T],
+//      fh: FHIRFormat[H],
       fh: Lazy[FHIRFormat[H]],
       ft: Format[T]
     ): Format[NonEmptyList[H] :: T] =
