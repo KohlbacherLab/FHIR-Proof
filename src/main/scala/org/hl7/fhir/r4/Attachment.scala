@@ -12,7 +12,8 @@ abstract class Attachment extends Element
 object Attachment extends ElementAttributes
 {
 
-  //TODO: contentType / language
+  //TODO: contentType
+  //TODO: language
 
 
   trait url[C[_]]{
@@ -46,3 +47,4 @@ object Attachment extends ElementAttributes
   }
 
 }
+

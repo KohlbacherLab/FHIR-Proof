@@ -10,14 +10,6 @@ import cats.data.NonEmptyList
 import shapeless.{:+:, CNil}
 
 
-/*
-abstract class DiagnosticReport
-extends DomainResource
-with Event
-with HasStatus[DiagnosticReport.Status.Value]
-with HasStaticCode
-*/
-
 sealed abstract class DiagnosticReport
 extends DomainResource
 with Event
@@ -75,6 +67,15 @@ with CanHaveEffective[Temporal :+: Period[_] :+: CNil]
   }
 
 
+  trait performer[+P <: DomainResource, C[+_]]{
+    this: DiagnosticReport =>
+    val performer: C[List[Reference[P]]]
+  }
+  trait performerNel[+P <: DomainResource]{
+    this: DiagnosticReport =>
+    val performer: NonEmptyList[Reference[P]]
+  }
+
   trait result[+O <: Observation, C[+_]]{
     this: DiagnosticReport =>
     val result: C[List[Reference[O]]]
@@ -85,5 +86,24 @@ with CanHaveEffective[Temporal :+: Period[_] :+: CNil]
   }
 
 
+  trait conclusion[C[+_]]{
+    this: DiagnosticReport =>
+    val conclusion: C[String]
+  }
+
+  trait conclusionCode[+CC <: CodeableConcept,C[+_]]{
+    this: DiagnosticReport =>
+    val conclusionCode: C[List[CC]]
+  }
+
+
+  trait presentedForm[+A <: Attachment, C[+_]]{
+    this: DiagnosticReport =>
+    val presentedForm: C[List[A]]
+  }
+  trait presentedFormNel[+A <: Attachment]{
+    this: DiagnosticReport =>
+    val presentedForm: NonEmptyList[A]
+  }
 
 }
