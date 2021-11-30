@@ -40,8 +40,8 @@ extends ValidValues[
   UUID :+:
   Temporal :+:
   Coding :+:
-//  Coding[_] :+:
   CodeableConcept :+: 
+  Reference[_] :+:
   CNil
 ] //TODO: complete list
 {
