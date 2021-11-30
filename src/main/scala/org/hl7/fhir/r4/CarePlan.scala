@@ -115,17 +115,73 @@ with CanHaveEncounter
 
 
     abstract class DetailElement extends BackboneElement[One]
+    {
+      val status: Detail.Status.Value
+    }
 
     object Detail extends BackboneElementAttributes
     {
       //TODO: attributes
+
+      trait code[+CC <: CodeableConcept,C[+_]]{
+        this: DetailElement =>
+        val code: C[CC]
+      }
+
+      trait reasonCode[+CC <: CodeableConcept,C[+_]]{
+        this: DetailElement =>
+        val reasonCode: C[CC]
+      }
+
+      trait reasonReference[+R <: DomainResource,C[+_]]{
+        this: DetailElement =>
+        val reasonReference: C[Reference[R]]
+      }
+
+      object Status extends CodedEnum
+      {
+         type Status = Value
+    
+         val NotStarted     = Val("not-started","Not Started")
+         val Scheduled      = Val("scheduled","Scheduled")
+         val InProgress     = Val("in-progress","In Progress")
+         val OnHold         = Val("on-hold","On Hold")
+         val Completed      = Val("completed","Completed")
+         val Cancelled      = Val("cancelled","Cancelled")
+         val Stopped        = Val("stopped","Stopped")
+         val EnteredInError = Val("entered-in-error","Entered in Error")
+         val Unknown        = Val("unknown","Unknown")
+    
+         implicit val format = json.formatCodedEnum(this)
+      }
+
+      trait statusReason[+CC <: CodeableConcept,C[+_]]{
+        this: DetailElement =>
+        val statusReason: C[CC]
+      }
+
+      trait description[C[_]]{
+        this: DetailElement =>
+        val description: C[String]
+      }
+
+
     }
 
+  }
+
+  trait ActivitySet {
+    this: Product =>
   }
 
   trait activity[+A <: ActivityElement,C[+_]]{
     this: CarePlan =>
     val activity: C[List[A]]
+  }
+
+  trait activities[+A <: ActivitySet,C[+_]]{
+    this: CarePlan =>
+    val activity: C[A]
   }
 
   trait activityNel[+A <: ActivityElement]{
