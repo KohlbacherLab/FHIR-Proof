@@ -120,6 +120,7 @@ with CanHaveEncounter
     }
 
     object Detail extends BackboneElementAttributes
+    with CanHaveReason[DetailElement]
     {
       //TODO: attributes
 
@@ -130,13 +131,13 @@ with CanHaveEncounter
 
       trait reasonCode[+CC <: CodeableConcept,C[+_]]{
         this: DetailElement =>
-        val reasonCode: C[CC]
+        val reasonCode: C[List[CC]]
+      }
+      trait reasonCodeNel[+CC <: CodeableConcept]{
+        this: DetailElement =>
+        val reasonCode: NonEmptyList[CC]
       }
 
-      trait reasonReference[+R <: DomainResource,C[+_]]{
-        this: DetailElement =>
-        val reasonReference: C[Reference[R]]
-      }
 
       object Status extends CodedEnum
       {

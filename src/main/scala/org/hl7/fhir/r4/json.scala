@@ -169,6 +169,7 @@ object json
         }
       )
 
+/*
     implicit def bbeArrayHead[H, T <: HList](
       implicit
       ct: scala.reflect.ClassTag[H],
@@ -195,7 +196,7 @@ object json
           case hs :: t => new JsArray(hs.map(fh.value.writes).toVector) ++ ft.writes(t).as[JsArray]
         }
       )
-
+*/
 
     import scala.collection.{BuildFrom,Factory}
     

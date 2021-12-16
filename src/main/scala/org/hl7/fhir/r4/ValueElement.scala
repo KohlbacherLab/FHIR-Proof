@@ -100,15 +100,6 @@ trait CanHaveValue[Vs <: shapeless.Coproduct] extends ValidValues[Vs]
   }
 
 
-/*
-  trait value[C[_]] extends value[]{
-    val value: C[]
-  }
-
-  trait value[C[_]] extends value[]{
-    val value: C[]
-  }
-*/
 }
 
 
