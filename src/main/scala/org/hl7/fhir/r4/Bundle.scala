@@ -70,7 +70,10 @@ object Bundle
       this: EntryElement =>
       val resource: R
     }
+
+
   }
+
 
   case class EntryOf[+R <: Resource](
     resource: R,
