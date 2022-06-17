@@ -660,7 +660,6 @@ object json
       fh: Lazy[Format[H]],
       ft: Format[T],
       keyFeature: KeyFeature[H]
-//      url: Extension.Url[H]
     ): Format[H :: T] =
       Format[H :: T](
         Reads(
@@ -669,7 +668,6 @@ object json
               arr <- js.validate[JsArray] 
               h   = arr.value 
                       .find(keyFeature)
-//                      .find(v => (v \ "url").validate[URI].contains(url.value))
                       .map(fh.value.reads)
                       .getOrElse(JsError(s"Missing Extension in ${js}"))
               t   = ft.reads(arr)
@@ -686,7 +684,6 @@ object json
       exts: Extension.IsValidExtension[H :: T],
       fh: Lazy[Format[H]],
       ft: Format[T],
-//      url: Extension.Url[H]
       keyFeature: KeyFeature[H]
     ): Format[Option[H] :: T] =
       Format[Option[H] :: T](
@@ -695,7 +692,6 @@ object json
             for {
               arr <- js.validate[JsArray] 
               h   =  arr.value 
-//                        .find(v => (v \ "url").validate[URI].contains(url.value))
                         .find(keyFeature)
                         .map(fh.value.reads)
                         .map(_.map(Some(_)))
@@ -718,7 +714,6 @@ object json
       exts: Extension.IsValidExtension[C[H] :: T],
       fh: Lazy[Format[H]],
       ft: Format[T],
-//      url: Extension.Url[H],
       keyFeature: KeyFeature[H],
       fac: Factory[H,C[H]],
       bf: BuildFrom[C[H],H,C[H]]
@@ -730,7 +725,6 @@ object json
               arr <- js.validate[JsArray] 
               hs  =  sequence(
                        arr.value
-//                          .filter(v => (v \ "url").validate[URI].contains(url.value))
                           .filter(keyFeature)
                           .map(fh.value.reads) 
                      )
