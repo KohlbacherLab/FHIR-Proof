@@ -4,6 +4,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:,CNil}
 
@@ -25,19 +26,19 @@ extends DomainResourceAttributes
     Resource.Type[E]("EpisodeOfCare") 
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
     type Status = Value
 
-    val Planned        = Val("planned","Planned")
-    val Waitlist       = Val("waitlist","Waitlist")
-    val Active         = Val("active","Active")
-    val OnHold         = Val("onhold","On Hold")
-    val Finished       = Val("finished","Finished")
-    val Cancelled      = Val("cancelled","Cancelled")
-    val EnteredInError = Val("entered-in-error","Entered in Error")
+    val Planned        = Value("planned")
+    val Waitlist       = Value("waitlist")
+    val Active         = Value("active")
+    val OnHold         = Value("onhold")
+    val Finished       = Value("finished")
+    val Cancelled      = Value("cancelled")
+    val EnteredInError = Value("entered-in-error")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
 

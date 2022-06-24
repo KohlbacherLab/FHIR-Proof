@@ -3,7 +3,7 @@
 
 name := "fhir-proof"
 organization in ThisBuild := "de.ekut.tbi"
-scalaVersion in ThisBuild := "2.13.1"
+scalaVersion in ThisBuild := "2.13.8"
 version in ThisBuild := "0.1-SNAPSHOT"
 
 

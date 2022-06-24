@@ -14,7 +14,8 @@ import cats.data.NonEmptyList
 object json
 {
 
-  def formatCodedEnum[E <: CodedEnum](
+/*
+  def formatEnum[E <: Enumeration](
     e: E
   ): Format[E#Value] =
     Format[E#Value](
@@ -33,7 +34,7 @@ object json
         c => Json.toJson(c.asInstanceOf[Coded].code)
       )
     )
-
+*/
 
   implicit def formatNel[T: Reads: Writes](
     implicit
@@ -156,20 +157,6 @@ object json
       case (a: JsError,_)                  => a
       case (_,b: JsError)                  => b
     }
-/*
-    jsA.fold(
-      errs =>
-        jsB.fold(
-          es => new JsError(errs ++ es),
-          b  => new JsError(errs)
-        ),
-      a =>
-        jsB.fold(
-          errs => new JsError(errs),
-          b  =>   new JsSuccess(f(a,b))
-        )
-    )
-*/
   }
 
   import scala.collection.Factory
@@ -185,168 +172,13 @@ object json
     ){ 
       case (acc,r) => combine(acc,r)(_ += _)
     }
-    .map(_.result)
+    .map(_.result())
 
   }
 
 
-/*
-  trait ProductHelperOps
-  {
 
-    import FHIRJson._
-
-    implicit def singleHListHead[H, T <: HList](
-      implicit
-      keyFeature: KeyFeature[H],
-      fh: Lazy[FHIRFormat[H]],
-      ft: Format[T],
-    ): Format[H :: T] =
-      Format[H :: T](
-        Reads(
-          js => 
-            for {
-              arr <- js.validate[JsArray]
-              h   = (
-                      if (keyFeature.exists)
-                        arr.value.find(keyFeature)
-                           .map(fh.value.reads)
-                      
-                      else
-                        arr.value.map(fh.value.reads)
-                           .find(_.isSuccess)
-                     )
-                     .getOrElse(JsError(s"No valid Entry found for required element"))
-              t   = ft.reads(js)
-              ht <- combine(h,t)(_ :: _)
-            } yield ht
-        ),
-        Writes {
-          case h :: t =>
-            Json.arr(fh.value.writes(h)) ++ ft.writes(t).as[JsArray]
-        }
-      )
-
-
-    implicit def optionHListHead[H, T <: HList](
-      implicit
-      keyFeature: KeyFeature[H],
-      fh: Lazy[FHIRFormat[H]],
-      ft: Format[T],
-    ): Format[Option[H] :: T] =
-      Format[Option[H] :: T](
-        Reads(
-          js => 
-            for {
-              arr <- js.validate[JsArray]
-              h   =  if (keyFeature.exists)
-                       arr.value
-                         .find(keyFeature)
-                         .map(fh.value.reads)
-                         .map(_.map(Some(_)))
-                         .getOrElse(JsSuccess(None))
-                     else
-                       JsSuccess(
-                         arr.value.map(fh.value.reads)
-                            .find(_.isSuccess)
-                            .map(_.get)
-                       )
-              t   = ft.reads(js)
-              ht <- combine(h,t)(_ :: _)
-            } yield ht
-        ), 
-        Writes {
-          case hOpt :: t =>
-            hOpt.map(fh.value.writes).map(Json.arr(_)).getOrElse(JsArray.empty) ++ ft.writes(t).as[JsArray]
-        }
-      )
-
-    import scala.collection.{BuildFrom,Factory}
-    
-    implicit def iterableHListHead[H, C[X] <: Iterable[X], T <: HList](
-      implicit
-      keyFeature: KeyFeature[H],
-      fh: Lazy[FHIRFormat[H]],
-      ft: Format[T],
-      fac: Factory[H,C[H]],
-      bf: BuildFrom[C[H],H,C[H]]
-    ): Format[C[H] :: T] =
-      Format[C[H] :: T](
-        Reads(
-          js => 
-            for {
-              arr <- js.validate[JsArray]
-              hs  = (
-                      if (keyFeature.exists)
-                        sequence(
-                          arr.value
-                            .filter(keyFeature)
-                            .map(fh.value.reads) 
-                        )
-                      else
-                        JsSuccess(
-                          arr.value.map(fh.value.reads)
-                             .filter(_.isSuccess)
-                             .map(_.get)
-                        )
-                     )
-                     .map(_.to(fac))
-
-              t   = ft.reads(js)
-              ht <- combine(hs,t)(_ :: _)
-            } yield ht
-          
-        ), 
-        Writes {
-          case hs :: t =>
-            new JsArray(hs.map(fh.value.writes).toIndexedSeq) ++ ft.writes(t).as[JsArray]
-        }
-      )
-
-    implicit def nonEmptyListHListHead[H, T <: HList](
-      implicit
-      keyFeature: KeyFeature[H],
-      fh: Lazy[FHIRFormat[H]],
-      ft: Format[T]
-    ): Format[NonEmptyList[H] :: T] =
-      Format[NonEmptyList[H] :: T](
-        Reads(
-          js => 
-            for {
-              arr <- js.validate[JsArray]
-              hs  =  (
-                      if (keyFeature.exists)
-                        sequence(
-                          arr.value
-                            .filter(keyFeature)
-                            .map(fh.value.reads) 
-                        )
-                      else
-                        JsSuccess(
-                          arr.value.map(fh.value.reads)
-                             .filter(_.isSuccess)
-                             .map(_.get)
-                        )
-                     )
-                     .filterNot(JsError("Expected non-empty List, but found empty list (or list with invalid entries)"))(_.isEmpty)
-                     .map(_.toList)
-                     .map(NonEmptyList.fromListUnsafe)
-
-              t   = ft.reads(js)
-
-              ht  <- combine(hs,t)(_ :: _)
-            } yield ht
-        ), 
-        Writes {
-          case hs :: t =>
-            new JsArray(hs.map(fh.value.writes).toList.toIndexedSeq) ++ ft.writes(t).as[JsArray]
-        }
-      )
-
-  }
-*/
-
-  object backboneElements// extends ProductHelperOps
+  object backboneElements
   {
 
     @annotation.implicitNotFound(

@@ -5,6 +5,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -22,16 +23,16 @@ extends CanHaveNotes
   self =>
 
 
-  object Priority extends CodedEnum
+  object Priority extends Enumeration
   {
      type Priority = Value
 
-     val Routine = Val("routine","Routine")
-     val Urgent  = Val("urgent","Urgent")
-     val Asap    = Val("asap","Asap")
-     val Stat    = Val("stat","Stat")
+     val Routine = Value("routine")
+     val Urgent  = Value("urgent")
+     val Asap    = Value("asap")
+     val Stat    = Value("stat")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
 
   trait priority[C[_]]{
@@ -44,7 +45,7 @@ extends CanHaveNotes
     val doNotPerform: C[Boolean]
   }
 
-
+/*
   trait basedOn[R <: Resource with Request,C[_]]{
     this: Request =>
     val basedOn: C[List[Reference[R]]]
@@ -53,7 +54,7 @@ extends CanHaveNotes
     this: Request =>
     val basedOn: NonEmptyList[Reference[R]]
   }
-
+*/
 
 
   type StatusType

@@ -7,15 +7,8 @@ import java.time.temporal.Temporal
 import shapeless.{:+:,CNil}
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
-
-/*
-abstract class Observation
-extends DomainResource
-with Event
-with HasStatus[Observation.Status.Value]
-with HasStaticCode
-*/
 
 
 sealed abstract class Observation
@@ -58,14 +51,14 @@ with CanHaveValue[
     Resource.Type[O]("Observation") 
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
-    val Registered  = Val("registered","Registered")
-    val Preliminary = Val("preliminary","Preliminary")
-    val Final       = Val("final", "Final")
-    val Amended     = Val("amended","Amended") 
+    val Registered  = Value("registered")
+    val Preliminary = Value("preliminary")
+    val Final       = Value("final")
+    val Amended     = Value("amended") 
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
   type StatusType = Status.Value
@@ -118,7 +111,6 @@ with CanHaveValue[
   }
 
 
-//  abstract class ComponentElement extends BackboneElement[Many] with HasStaticCode
   sealed abstract class ComponentElement extends BackboneElement[Many]
 
   abstract class ComponentElementSC

@@ -5,6 +5,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -15,7 +16,6 @@ object HL7v2Table0487
 {
   implicit val system =
     CodingSystem[HL7v2Table0487]("http://terminology.hl7.org/CodeSystem/v2-0487")
-//    Coding.System[HL7v2Table0487]("http://terminology.hl7.org/CodeSystem/v2-0487")
 }
 
 
@@ -38,16 +38,16 @@ with CanHaveNotes
   }
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
     type Status = Value
 
-    val Available      = Val("available","Available")
-    val Unavailable    = Val("unavailable","Unavailable")
-    val Unsatisfactory = Val("unsatisfactory","Unsatisfactory")
-    val EnteredInError = Val("entered-in-error","Entered in Error")
+    val Available      = Value("available")
+    val Unavailable    = Value("unavailable")
+    val Unsatisfactory = Value("unsatisfactory")
+    val EnteredInError = Value("entered-in-error")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
   trait status[C[_]]{
     this: Specimen =>
@@ -57,7 +57,6 @@ with CanHaveNotes
   trait `type`[C[+_]]{
     this: Specimen =>
     val `type`: C[CodeableConcept with CodeableConcept.codingNel[CodingStatic[HL7v2Table0487]]]
-//    val `type`: C[BasicCodeableConcept[HL7v2Table0487]]
   }
 
 

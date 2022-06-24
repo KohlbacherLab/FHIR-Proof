@@ -4,6 +4,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:,CNil}
 
@@ -14,7 +15,6 @@ extends DomainResource
 with HasStatus[Encounter.Status.Value]
 {
   val `class`: CodingStatic[HL7v3ActEncounterCode.Value]
-//  val `class`: Coding[HL7v3ActEncounterCode.Value]
 }
 
 
@@ -27,21 +27,21 @@ extends DomainResourceAttributes
     Resource.Type[E]("Encounter") 
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
     type Status = Value
 
-    val Planned        = Val("planned","Planned")
-    val Arrived        = Val("arrived","Arrived")
-    val Triaged        = Val("triaged","Triaged")
-    val InProgress     = Val("in-progress","In Progress")
-    val OnLeave        = Val("onleave","On Leave")
-    val Finished       = Val("finished","Finished")
-    val Cancelled      = Val("cancelled","Cancelled")
-    val EnteredInError = Val("entered-in-error","Entered in Error")
-    val Unknown        = Val("unknown","Unknown")
+    val Planned        = Value("planned")
+    val Arrived        = Value("arrived")
+    val Triaged        = Value("triaged")
+    val InProgress     = Value("in-progress")
+    val OnLeave        = Value("onleave")
+    val Finished       = Value("finished")
+    val Cancelled      = Value("cancelled")
+    val EnteredInError = Value("entered-in-error")
+    val Unknown        = Value("unknown")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
 

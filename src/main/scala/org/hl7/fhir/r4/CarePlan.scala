@@ -5,6 +5,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -31,33 +32,33 @@ with CanHaveEncounter
     Resource.Type[C]("CarePlan")
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
      type Status = Value
 
-     val Draft          = Val("draft","Draft")
-     val Active         = Val("active","Active")
-     val OnHold         = Val("on-hold","On Hold")
-     val Revoked        = Val("revoked","Revoked")
-     val Completed      = Val("completed","Completed")
-     val EnteredInError = Val("entered-in-error","Entered in Error")
-     val Unknown        = Val("unknown","Unknown")
+     val Draft          = Value("draft")
+     val Active         = Value("active")
+     val OnHold         = Value("on-hold")
+     val Revoked        = Value("revoked")
+     val Completed      = Value("completed")
+     val EnteredInError = Value("entered-in-error")
+     val Unknown        = Value("unknown")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
   type StatusType = Status.Value
 
 
-  object Intent extends CodedEnum
+  object Intent extends Enumeration
   {
      type Intent = Value
 
-     val Proposal      = Val("proposal","Proposal")
-     val Plan          = Val("plan","Plan")
-     val Order         = Val("order","Order")
-     val Option        = Val("option","option")
+     val Proposal      = Value("proposal")
+     val Plan          = Value("plan")
+     val Order         = Value("order")
+     val Option        = Value("option")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
   type IntentType = Intent.Value
 
@@ -139,21 +140,21 @@ with CanHaveEncounter
       }
 
 
-      object Status extends CodedEnum
+      object Status extends Enumeration
       {
          type Status = Value
     
-         val NotStarted     = Val("not-started","Not Started")
-         val Scheduled      = Val("scheduled","Scheduled")
-         val InProgress     = Val("in-progress","In Progress")
-         val OnHold         = Val("on-hold","On Hold")
-         val Completed      = Val("completed","Completed")
-         val Cancelled      = Val("cancelled","Cancelled")
-         val Stopped        = Val("stopped","Stopped")
-         val EnteredInError = Val("entered-in-error","Entered in Error")
-         val Unknown        = Val("unknown","Unknown")
+         val NotStarted     = Value("not-started")
+         val Scheduled      = Value("scheduled")
+         val InProgress     = Value("in-progress")
+         val OnHold         = Value("on-hold")
+         val Completed      = Value("completed")
+         val Cancelled      = Value("cancelled")
+         val Stopped        = Value("stopped")
+         val EnteredInError = Value("entered-in-error")
+         val Unknown        = Value("unknown")
     
-         implicit val format = json.formatCodedEnum(this)
+         implicit val format = Json.formatEnum(this)
       }
 
       trait statusReason[+CC <: CodeableConcept,C[+_]]{

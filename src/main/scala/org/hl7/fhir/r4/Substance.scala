@@ -1,6 +1,8 @@
 package org.hl7.fhir.r4
 
 
+import play.api.libs.json.Json
+
 
 abstract class Substance
 extends DomainResource
@@ -15,15 +17,15 @@ extends DomainResourceAttributes
     Resource.Type[S]("Substance")
 
 
-  object Status extends CodedEnum {
+  object Status extends Enumeration {
 
     type Status = Value    
 
-    val Active         = Val("active","Active")
-    val Inactive       = Val("inactive","Inactive")
-    val EnteredInError = Val("entered-in-error","Entered in Error")
+    val Active         = Value("active")
+    val Inactive       = Value("inactive")
+    val EnteredInError = Value("entered-in-error")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
   trait status[C[_]] extends Substance {
@@ -33,7 +35,6 @@ extends DomainResourceAttributes
 
   trait code {
     val code: CodeableConcept with CodeableConcept.codingNel[CodingStatic[SNOMEDCT]]
-//    val code: CodeableConcept with CodeableConcept.codingNel[Coding[SNOMEDCT]]
   }
 
 

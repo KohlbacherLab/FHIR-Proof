@@ -6,6 +6,7 @@ import java.time.Instant
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -39,15 +40,15 @@ with CanHaveEffective[Temporal :+: Period[_] :+: CNil]
     Resource.Type[C]("DiagnosticReport")
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
-    val Registered  = Val("registered","Registered")
-    val Preliminary = Val("preliminary","Preliminary")
-    val Final       = Val("final", "Final")
-    val Amended     = Val("amended","Amended")
+    val Registered  = Value("registered")
+    val Preliminary = Value("preliminary")
+    val Final       = Value("final")
+    val Amended     = Value("amended")
     //TODO: further values
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
   type StatusType = Status.Value
 

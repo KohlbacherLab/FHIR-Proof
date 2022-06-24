@@ -5,6 +5,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -17,12 +18,10 @@ extends DomainResource
 
   this: Claim.created[_] with Claim.provider[_] =>
 
-//  val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
   val `type`: CodeableConcept with CodeableConcept.codingNel[CodingStatic[Claim.Type.Value]]
 
   val use: Claim.Use.Value
 
-//  val priority: CodeableConcept with CodeableConcept.codingNel[Coding[ProcessPriority.Value]]
   val priority: CodeableConcept with CodeableConcept.codingNel[CodingStatic[ProcessPriority.Value]]
 
   val patient: Reference[Patient]
@@ -40,47 +39,46 @@ with RequestAttributes
     Resource.Type[R]("Claim")
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
      type Status = Value
 
-     val Active         = Val("active"          ,"Active")
-     val Cancelled      = Val("cancelled"       ,"Cancelled")
-     val Draft          = Val("draft"           ,"Draft")
-     val EnteredInError = Val("entered-in-error","Entered in Error")
+     val Active         = Value("active")
+     val Cancelled      = Value("cancelled")
+     val Draft          = Value("draft")
+     val EnteredInError = Value("entered-in-error")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
   type StatusType = Status.Value
 
 
-  object Type extends CodedEnum
+  object Type extends Enumeration
   {
      type Type = Value
 
-     val Institutional = Val("institutional","Institutional")
-     val Oral          = Val("oral"         ,"Oral")
-     val Pharmacy      = Val("pharmacy"     ,"Pharmacy")
-     val Professional  = Val("professional" ,"Professional")
-     val Vision        = Val("vision"       ,"Vision")
+     val Institutional = Value("institutional")
+     val Oral          = Value("oral")
+     val Pharmacy      = Value("pharmacy")
+     val Professional  = Value("professional")
+     val Vision        = Value("vision")
 
      implicit val system =
        CodingSystem[Value]("http://terminology.hl7.org/CodeSystem/claim-type")
-//       Coding.System[Value]("http://terminology.hl7.org/CodeSystem/claim-type")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
 
 
-  object Use extends CodedEnum
+  object Use extends Enumeration
   {
      type Use = Value
 
-     val Claim            = Val("claim"           , "Claim")
-     val Preauthorization = Val("preauthorization", "Preauthorization")
-     val Predetermination = Val("predetermination", "Predetermination")
+     val Claim            = Value("claim")
+     val Preauthorization = Value("preauthorization")
+     val Predetermination = Value("predetermination")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
 
 

@@ -4,6 +4,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 
 
@@ -14,7 +15,6 @@ with HasStatus[FamilyMemberHistory.Status.Value]
   val patient: Reference[Patient]
 
   val relationship: CodeableConcept with CodeableConcept.codingNel[CodingStatic[HL7v3FamilyMember.Value]]
-//  val relationship: CodeableConcept with CodeableConcept.codingNel[Coding[HL7v3FamilyMember.Value]]
 }
 
 
@@ -27,16 +27,16 @@ extends DomainResourceAttributes
     Resource.Type[F]("FamilyMemberHistory") 
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
     type Status = Value
 
-    val Partial        = Val("partial","Partial")
-    val Completed      = Val("completed","Completed")
-    val EnteredInError = Val("entered-in-error","Entered in Error")
-    val HealthUnknown  = Val("health-unknown","Health Unknown")
+    val Partial        = Value("partial")
+    val Completed      = Value("completed")
+    val EnteredInError = Value("entered-in-error")
+    val HealthUnknown  = Value("health-unknown")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
   //TODO TODO: other attributes....

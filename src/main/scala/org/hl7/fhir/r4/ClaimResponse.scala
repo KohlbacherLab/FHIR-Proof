@@ -5,6 +5,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -18,7 +19,6 @@ extends DomainResource
 
   val status: Claim.Status.Value
 
-//  val `type`: CodeableConcept with CodeableConcept.codingNel[Coding[Claim.Type.Value]]
   val `type`: CodeableConcept with CodeableConcept.codingNel[CodingStatic[Claim.Type.Value]]
 
   val use: Claim.Use.Value
@@ -42,20 +42,19 @@ with EventAttributes[Patient :+: CNil]
     Resource.Type[R]("ClaimResponse")
 
 
-  object Outcome extends CodedEnum
+  object Outcome extends Enumeration
   {
      type Outcome = Value
 
-     val Queued   = Val("queued"  ,"Queued")
-     val Complete = Val("complete","Processing Complete")
-     val Error    = Val("error"   ,"Error")
-     val Partial  = Val("partial" ,"Partial Processing")
+     val Queued   = Value("queued")
+     val Complete = Value("complete")
+     val Error    = Value("error")
+     val Partial  = Value("partial")
 
      implicit val system =
        CodingSystem[Outcome]("http://hl7.org/fhir/remittance-outcome")
-//       Coding.System[Outcome]("http://hl7.org/fhir/remittance-outcome")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
 
 

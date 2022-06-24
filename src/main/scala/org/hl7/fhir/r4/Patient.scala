@@ -5,6 +5,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -45,34 +46,31 @@ with IndividualAttributes
   object Contact extends BackboneElementAttributes 
   {
 
-    object RelationshipType extends CodedEnum
+    object RelationshipType extends Enumeration
     {
       type RelationshipType = Value
     
-      val C = Val("C","Emergency Contact")
-      val E = Val("E","Employer")
-      val I = Val("I","Insurance Company")
-      val N = Val("N","Next-of-kin")
-      val S = Val("S","State Agency")
-      val U = Val("U","Unknown")
+      val C = Value("C")
+      val E = Value("E")
+      val I = Value("I")
+      val N = Value("N")
+      val S = Value("S")
+      val U = Value("U")
 
       implicit val system =
         CodingSystem[Value]("http://hl7.org/fhir/ValueSet/patient-contactrelationship")
-//        Coding.System[Value]("http://hl7.org/fhir/ValueSet/patient-contactrelationship")
 
       implicit val formatRelationshipType =
-        json.formatCodedEnum(this)
+        Json.formatEnum(this)
     }
     
     trait relationship[C[_]] {
       this: ContactElement =>
       val relationship: C[List[CodeableConcept with CodeableConcept.codingNel[CodingStatic[RelationshipType.Value]]]] 
-//      val relationship: C[List[CodeableConcept with CodeableConcept.codingNel[Coding[RelationshipType.Value]]]] 
     }
     trait relationshipNel {
       this: ContactElement =>
       val relationship: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[CodingStatic[RelationshipType.Value]]] 
-//      val relationship: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[RelationshipType.Value]]] 
     }
 
     trait organization[C[_]] {

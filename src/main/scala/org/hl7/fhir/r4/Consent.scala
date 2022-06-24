@@ -5,14 +5,13 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 
 abstract class Consent
 extends DomainResource
 with HasStatus[Consent.Status.Value]
 {
-//  val scope: CodeableConcept with CodeableConcept.codingNel[Coding[Consent.Scope.Value]]
-//  val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding[_]]]
   val scope: CodeableConcept with CodeableConcept.codingNel[CodingStatic[Consent.Scope.Value]]
   val category: NonEmptyList[CodeableConcept with CodeableConcept.codingNel[Coding]]
 }
@@ -26,30 +25,30 @@ extends DomainResourceAttributes
     Resource.Type[C]("Consent")
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
-    val Draft          = Val("draft", "Draft")
-    val Proposed       = Val("proposed","Proposed")
-    val Active         = Val("active", "Active")
-    val Rejected       = Val("rejected", "Rejected")
-    val Inactive       = Val("inactive", "Inactive")
-    val EnteredInError = Val("entered-in-error", "Entered in Error")
+    val Draft          = Value("draft")
+    val Proposed       = Value("proposed")
+    val Active         = Value("active")
+    val Rejected       = Value("rejected")
+    val Inactive       = Value("inactive")
+    val EnteredInError = Value("entered-in-error")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
 
-  object Scope extends CodedEnum
+  object Scope extends Enumeration
   {
-    val Adr            = Val("adr","Advanced Care Directive")
-    val Research       = Val("research","Research")
-    val PatientPrivacy = Val("patient-privacy","Privacy Consent")
-    val Treatment      = Val("treatment","Treatment")
+    val Adr            = Value("adr")
+    val Research       = Value("research")
+    val PatientPrivacy = Value("patient-privacy")
+    val Treatment      = Value("treatment")
 
-//    implicit val system = Coding.System[Scope.Value]("http://terminology.hl7.org/CodeSystem/consentscope")
-    implicit val system = CodingSystem[Scope.Value]("http://terminology.hl7.org/CodeSystem/consentscope")
+    implicit val system =
+      CodingSystem[Scope.Value]("http://terminology.hl7.org/CodeSystem/consentscope")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
 /*

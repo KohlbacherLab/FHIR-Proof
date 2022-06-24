@@ -3,6 +3,7 @@ package org.hl7.fhir.r4
 
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 import shapeless.{:+:, CNil}
 
 
@@ -19,15 +20,15 @@ extends DomainResourceAttributes
     Resource.Type[M]("Medication")
 
 
-  object Status extends CodedEnum {
+  object Status extends Enumeration {
 
     type Status = Value    
 
-    val Active         = Val("active","Active")
-    val Inactive       = Val("inactive","Inactive")
-    val EnteredInError = Val("entered-in-error","Entered in Error")
+    val Active         = Value("active")
+    val Inactive       = Value("inactive")
+    val EnteredInError = Value("entered-in-error")
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
 
@@ -41,7 +42,6 @@ extends DomainResourceAttributes
 
   trait form[C[+_]]{
     val form: C[CodeableConcept with CodeableConcept.codingNel[CodingStatic[SNOMEDCT]]]
-//    val form: C[CodeableConcept with CodeableConcept.codingNel[Coding[SNOMEDCT]]]
   }
 
 

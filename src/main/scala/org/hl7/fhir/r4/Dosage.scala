@@ -1,6 +1,7 @@
 package org.hl7.fhir.r4
 
 
+import play.api.libs.json.Json
 
 
 abstract class Dosage extends BackboneElement[Many]
@@ -14,21 +15,19 @@ object Dosage extends BackboneElementAttributes
   object DoseAndRate extends ElementAttributes
   {
 
-     final object Type extends CodedEnum
+     final object Type extends Enumeration
      {
-       val Calculated = Val("calculated","Calculated")
-       val Ordered    = Val("ordered","Ordered")
+       val Calculated = Value("calculated")
+       val Ordered    = Value("ordered")
 
         implicit val system = CodingSystem[Type.Value]("http://hl7.org/fhir/ValueSet/dose-rate-type")
-//        implicit val system = Coding.System[Type.Value]("http://hl7.org/fhir/ValueSet/dose-rate-type")
 
-        implicit val format = json.formatCodedEnum(this) 
+        implicit val format = Json.formatEnum(this) 
      }
 
     trait `type`[C[+_]]{ 
       this: DoseAndRateElement =>
       val `type`: C[CodeableConcept with CodeableConcept.codingNel[CodingStatic[Type.Value]]]
-//      val `type`: C[CodeableConcept with CodeableConcept.codingNel[Coding[Type.Value]]]
     }
 
 

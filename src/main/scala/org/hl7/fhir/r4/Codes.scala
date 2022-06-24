@@ -1,20 +1,19 @@
 package org.hl7.fhir.r4
 
 
+import play.api.libs.json.Json
 
-
-object ProcessPriority extends CodedEnum
+object ProcessPriority extends Enumeration
 {
    type ProcessPriority = Value
 
-   val Stat     = Val("stat"    ,"Immediate")
-   val Normal   = Val("normal"  ,"Normal")
-   val Deferred = Val("deferred","Deferred")
+   val Stat     = Value("stat")
+   val Normal   = Value("normal")
+   val Deferred = Value("deferred")
 
    implicit val system =
      CodingSystem[ProcessPriority]("http://terminology.hl7.org/CodeSystem/processpriority")
-//     Coding.System[ProcessPriority]("http://terminology.hl7.org/CodeSystem/processpriority")
 
-   implicit val format = json.formatCodedEnum(this)
+   implicit val format = Json.formatEnum(this)
 }
 

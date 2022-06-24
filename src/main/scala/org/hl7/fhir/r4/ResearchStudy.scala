@@ -7,6 +7,7 @@ import java.time.temporal.Temporal
 import shapeless.{:+:,CNil}
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 
 
@@ -26,12 +27,12 @@ with CanHaveNotes
     Resource.Type[R]("ResearchStudy") 
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
 
     //TODO TODO
 
-    implicit val format = json.formatCodedEnum(this)
+    implicit val format = Json.formatEnum(this)
   }
 
   //TODO TODO

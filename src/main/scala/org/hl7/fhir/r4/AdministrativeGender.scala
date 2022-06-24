@@ -1,18 +1,20 @@
 package org.hl7.fhir.r4
 
 
+import play.api.libs.json.Json
 
-object AdministrativeGender extends CodedEnum
+
+object AdministrativeGender extends Enumeration
 {
   type AdministrativeGender = Value
 
-  val Male    = Val("male","Male")
-  val Female  = Val("female","Female")
-  val Other   = Val("other","Other")
-  val Unknown = Val("unknown","Unknown")
+  val Male    = Value("male")
+  val Female  = Value("female")
+  val Other   = Value("other")
+  val Unknown = Value("unknown")
 
-  implicit val formatGender =
-    json.formatCodedEnum(this)
+  implicit val format =
+    Json.formatEnum(this)
 
 }
 

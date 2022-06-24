@@ -4,6 +4,7 @@ package org.hl7.fhir.r4
 import java.time.temporal.Temporal
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -33,20 +34,20 @@ with HasMedication
     Resource.Type[M]("MedicationStatement")
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
      type Status = Value
 
-     val Active         = Val("active","Active")
-     val Completed      = Val("completed","Completed")
-     val EnteredInError = Val("entered-in-error","Entered in Error")
-     val Intended       = Val("intended","Intended")
-     val Stopped        = Val("stopped","Stopped")
-     val OnHold         = Val("on-hold","On Hold")
-     val Unknown        = Val("unknown","Unknown")
-     val NotTaken       = Val("not-taken","Not Taken")
+     val Active         = Value("active")
+     val Completed      = Value("completed")
+     val EnteredInError = Value("entered-in-error")
+     val Intended       = Value("intended")
+     val Stopped        = Value("stopped")
+     val OnHold         = Value("on-hold")
+     val Unknown        = Value("unknown")
+     val NotTaken       = Value("not-taken")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
 
   type StatusType = Status.Value

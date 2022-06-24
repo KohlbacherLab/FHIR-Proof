@@ -20,13 +20,32 @@ object Code
 {
   def apply[T <: HasStaticCode, S: CodingSystem](implicit c: Code[T,S]) = c
 
-  def apply[T <: HasStaticCode](loinc: LOINC): Code[T,LOINC] =
-    new Code[T,LOINC]{ val value = CodeableConceptStatic(loinc) }
+  def apply[T <: HasStaticCode](
+    loinc: CodingStatic[LOINC]
+  ): Code[T,LOINC] =
+    new Code[T,LOINC]{
+      val value = CodeableConceptStatic(loinc)
+    }
+/*
+  def apply[T <: HasStaticCode](
+    loinc: LOINC
+  ): Code[T,LOINC] =
+    new Code[T,LOINC]{
+      val value = CodeableConceptStatic(loinc)
+    }
+*/
 
-  def apply[T <: HasStaticCode, S: CodingSystem](c: String, d: Option[String] = None): Code[T,S] =
-    new Code[T,S]{ val value = CodeableConceptStatic(CodingStatic[S](c,d,None)) }
+  def apply[T <: HasStaticCode, S: CodingSystem](
+    c: String,
+    d: Option[String] = None
+  ): Code[T,S] =
+    new Code[T,S]{
+      val value = CodeableConceptStatic(CodingStatic[S](c,d,None))
+    }
 
-  def apply[T <: HasStaticCode, S: CodingSystem](c: String, d: String): Code[T,S] =
+  def apply[T <: HasStaticCode, S: CodingSystem](
+    c: String, d: String
+  ): Code[T,S] =
     Code[T,S](c,Some(d))
 
 }

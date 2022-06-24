@@ -4,6 +4,7 @@ package org.hl7.fhir.r4
 import java.time.{LocalDate,LocalDateTime}
 
 import cats.data.NonEmptyList
+import play.api.libs.json.Json
 
 import shapeless.{:+:, CNil}
 
@@ -31,38 +32,38 @@ with HasMedication
     Resource.Type[M]("MedicationRequest")
 
 
-  object Status extends CodedEnum
+  object Status extends Enumeration
   {
      type Status = Value
 
-     val Active         = Val("active","Active")
-     val OnHold         = Val("on-hold","On Hold")
-     val Cancelled      = Val("cancelled","Cancelled")
-     val Completed      = Val("completed","Completed")
-     val EnteredInError = Val("entered-in-error","Entered in Error")
-     val Stopped        = Val("stopped","Stopped")
-     val Draft          = Val("draft","Draft")
-     val Unknown        = Val("unknown","Unknown")
+     val Active         = Value("active")
+     val OnHold         = Value("on-hold")
+     val Cancelled      = Value("cancelled")
+     val Completed      = Value("completed")
+     val EnteredInError = Value("entered-in-error")
+     val Stopped        = Value("stopped")
+     val Draft          = Value("draft")
+     val Unknown        = Value("unknown")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
   type StatusType = Status.Value
 
 
-  object Intent extends CodedEnum
+  object Intent extends Enumeration
   {
      type Intent = Value
 
-     val Proposal      = Val("proposal","Proposal")
-     val Plan          = Val("plan","Plan")
-     val Order         = Val("order","Order")
-     val OriginalOrder = Val("original-order","Original Order")
-     val ReflexOrder   = Val("reflex-order","Reflex Order")
-     val FillerOrder   = Val("filler-order","Filler Order")
-     val InstanceOrder = Val("instance-order","Instance Order")
-     val Option        = Val("option","option")
+     val Proposal      = Value("proposal")
+     val Plan          = Value("plan")
+     val Order         = Value("order")
+     val OriginalOrder = Value("original-order")
+     val ReflexOrder   = Value("reflex-order")
+     val FillerOrder   = Value("filler-order")
+     val InstanceOrder = Value("instance-order")
+     val Option        = Value("option")
 
-     implicit val format = json.formatCodedEnum(this)
+     implicit val format = Json.formatEnum(this)
   }
   type IntentType = Intent.Value
 

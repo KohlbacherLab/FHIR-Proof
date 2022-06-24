@@ -137,50 +137,23 @@ case class Identifier
 object Identifier
 {
 
-  object Use extends CodedEnum
+  object Use extends Enumeration
   {
     type Use = Value
-    val Usual     = Val("usual","Usual")
-    val Official  = Val("official","Official")
-    val Secondary = Val("secondary","Secondary")
-    val Temp      = Val("temp","Temp")
-    val Old       = Val("old","Old")
+
+    val Usual     = Value("usual")
+    val Official  = Value("official")
+    val Secondary = Value("secondary")
+    val Temp      = Value("temp")
+    val Old       = Value("old")
+
+    implicit val format =
+      Json.formatEnum(Use)
   }
 
-  implicit val formatUse =
-    json.formatCodedEnum(Use)
 
   implicit def formatIdentifier =
     Json.format[Identifier]
-
-}
-
-
-
-trait Coded
-{
-  val code: String
-  val display: Option[String]
-}
-
-object Coded
-{
-  def mapping[C <: Coded](cs: C*): Map[C,String] = 
-    cs.map(c => (c,c.code)).toMap
-}
-
-abstract class CodedEnum extends Enumeration
-{
-
-  protected case class Val(
-    code: String,
-    display: Option[String]
-  ) extends super.Val with Coded
-
-  object Val
-  {
-    def apply(code: String, display: String): Val = Val(code,Some(display))
-  }
 
 }
 
@@ -234,7 +207,7 @@ extends Coding
 
 object CodingStatic
 {
-
+/*
   def apply[C <: Coded](
     c: C
   )(
@@ -242,17 +215,17 @@ object CodingStatic
   ): CodingStatic[C] =
     CodingStatic[C](c.code,c.display,None)
 
-
-  def apply[C <: CodedEnum](
+  def apply[C <: Enumeration](
     c: C#Value
   )(
     implicit sys: CodingSystem[C#Value]
   ): CodingStatic[C#Value] =
     CodingStatic[C#Value](c.asInstanceOf[Coded].code,c.asInstanceOf[Coded].display,None)
+*/
 
   def apply[E <: Enumeration](
     c: E#Value,
-    display: Option[String]
+    display: Option[String] = None
   )(
     implicit sys: CodingSystem[E#Value]
   ): CodingStatic[E#Value] =
@@ -331,8 +304,8 @@ object CodeableConceptStatic
   def apply[S](coding: CodingStatic[S]): CodeableConceptStatic[S] =
     CodeableConceptStatic(NonEmptyList.one(coding),None)
 
-  def apply[C <: Coded](c: C)(implicit sys: CodingSystem[C]): CodeableConceptStatic[C] =
-    CodeableConceptStatic(CodingStatic[C](c))
+//  def apply[C <: Coded](c: C)(implicit sys: CodingSystem[C]): CodeableConceptStatic[C] =
+//    CodeableConceptStatic(CodingStatic[C](c))
 
 
   import json.formatNel
@@ -428,7 +401,7 @@ object BasicCoding
     BasicCoding[C](c.code,c.display,None)
 
 
-  def apply[C <: CodedEnum](
+  def apply[C <: Enumeration](
     c: C#Value
   )(
     implicit sys: Coding.System[C#Value]
