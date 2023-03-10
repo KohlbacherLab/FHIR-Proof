@@ -52,8 +52,9 @@ object Bundle
   }
 
 
-  sealed trait HasTotal
+  trait HasTotal
   {
+    this: Bundle =>
     def total: Int 
   }
 

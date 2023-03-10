@@ -123,7 +123,19 @@ object ClosedPeriod
     Json.format[ClosedPeriod[T]]
 }
 
-
+object Period
+{
+  implicit def format[T <: Temporal: Format] = 
+    Format[Period[T]](
+      Reads(
+        js => js.validate[ClosedPeriod[T]].orElse(js.validate[OpenEndPeriod[T]])
+      ),
+      Writes {
+        case open: OpenEndPeriod[T] => Json.toJson(open)
+        case closed: ClosedPeriod[T] => Json.toJson(closed)
+      }
+    )
+}
 
 
 case class Identifier
